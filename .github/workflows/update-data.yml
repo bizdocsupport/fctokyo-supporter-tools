@@ -1,0 +1,64 @@
+name: Update FC Tokyo public data
+
+on:
+  schedule:
+    # 毎日 7:07（日本時間）
+    - cron: "7 22 * * *"
+    # 毎日 19:07（日本時間）
+    - cron: "7 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: club-ticket-navi-fctokyo-data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      MASTER_API_URL: ${{ vars.MASTER_API_URL }}
+      TOP_CALENDAR_ID: ${{ vars.TOP_CALENDAR_ID }}
+      U21_CALENDAR_ID: ${{ vars.U21_CALENDAR_ID }}
+      TICKET_URL: /ticket/
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run parser tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Update ticket data
+        run: python updater.py
+
+      - name: Build ticket website data
+        run: python tools/build_static_site.py
+
+      - name: Build calendar website data
+        run: python tools/build_calendar_data.py
+
+      - name: Commit updated public data
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/matches.csv data/ticket_news.csv data/metadata.json docs/data/ticket-data.json docs/calendar/data/schedule-data.json
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "Update FC Tokyo ticket and calendar data"
+            git push
+          fi
