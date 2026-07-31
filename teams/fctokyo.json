@@ -1,0 +1,18 @@
+{
+  "key": "fctokyo",
+  "enabled": true,
+  "adapter": "fctokyo",
+  "team_name": "FC東京",
+  "edition_name": "FC東京版",
+  "service_name": "クラブチケットナビ",
+  "page_title": "クラブチケットナビ FC東京版",
+  "page_icon": "🎟️",
+  "subtitle": "FC東京の試合日とチケット発売日を、ひとつの一覧で。",
+  "season_label": "2026/27シーズン",
+  "schedule_url": "https://www.fctokyo.co.jp/match/schedule/",
+  "ticket_news_url": "https://www.fctokyo.co.jp/news/?slug=ticket",
+  "official_site_url": "https://www.fctokyo.co.jp/",
+  "home_row_color": "#eaf2ff",
+  "away_row_color": "#fdecec",
+  "disclaimer": "本サイトは個人が運営する非公式サイトです。FC東京、Jリーグ、各クラブおよび各主催者とは関係ありません。掲載内容の正確性・完全性を保証するものではありません。チケット購入前に必ず公式情報をご確認ください。"
+}

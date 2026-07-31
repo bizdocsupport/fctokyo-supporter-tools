@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="FC東京トップチームとFC東京U-21の試合日程をGoogleカレンダーへ追加できる非公式ツールです。">
+  <meta name="theme-color" content="#071a52">
+  <title>FC東京 試合日程カレンダー｜非公式</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body class="calendar-page">
+  <header class="global-header">
+    <a class="site-brand" href="../"><span class="brand-bars"><i></i><i></i></span><span>FC TOKYO<br>SUPPORTER TOOLS</span></a>
+    <nav class="header-nav"><a href="../ticket/">TICKET</a><a href="#schedule">SCHEDULE</a></nav>
+  </header>
+
+  <main>
+    <section class="calendar-hero shell">
+      <div>
+        <p class="kicker">FC TOKYO MATCH CALENDAR / UNOFFICIAL</p>
+        <h1>試合日程を、<br><span>いつものカレンダーへ。</span></h1>
+        <p>トップチームとFC東京U-21の日程を登録できます。日時未定の試合は候補期間で表示し、確定後は同じ予定が正式日時へ更新されます。</p>
+      </div>
+      <div class="update-panel calendar-update-panel">
+        <span>LAST UPDATED</span>
+        <strong id="calendar-last-updated">読み込み中</strong>
+        <small id="calendar-data-status">DATA LOADING</small>
+      </div>
+    </section>
+
+    <section class="calendar-subscriptions shell">
+      <article class="subscription-card top-team-card">
+        <div class="subscription-head"><span>TOP TEAM</span><b>01</b></div>
+        <h2>FC東京 トップチーム</h2>
+        <p>リーグ戦・カップ戦など。日程変更は登録済みの公開カレンダーへ反映されます。</p>
+        <div class="subscription-actions">
+          <a id="top-google-link" class="primary-action is-disabled" aria-disabled="true">Googleカレンダーに追加</a>
+          <button id="top-ical-button" class="secondary-action" type="button" disabled>iCal URLをコピー</button>
+        </div>
+      </article>
+
+      <article class="subscription-card u21-team-card">
+        <div class="subscription-head"><span>U-21</span><b>02</b></div>
+        <h2>FC東京U-21</h2>
+        <p>確定日程と候補期間を掲載。複数の候補日は、ひとつの期間予定として登録します。</p>
+        <div class="subscription-actions">
+          <a id="u21-google-link" class="primary-action is-disabled" aria-disabled="true">Googleカレンダーに追加</a>
+          <button id="u21-ical-button" class="secondary-action" type="button" disabled>iCal URLをコピー</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="calendar-explanation shell">
+      <div class="calendar-info-strip"><strong>未確定日程の扱い</strong><span>「2/27・2/28・3/1」が候補なら、2/27〜3/1の終日予定を1件登録。正式日時が決まると、その予定を同じ予定IDのまま更新します。</span></div>
+      <a class="ticket-cross-link" href="../ticket/"><span>チケット発売日も確認</span><strong>CLUB TICKET NAVI →</strong></a>
+    </section>
+
+    <section id="schedule" class="calendar-schedule shell">
+      <div class="section-title-row calendar-title-row">
+        <div><p class="kicker">MATCH SCHEDULE</p><h2>掲載中の日程</h2></div>
+        <label class="toggle-row"><input id="calendar-hide-finished" type="checkbox" checked><span class="toggle-ui"></span><span>終了済みを非表示</span></label>
+      </div>
+      <div class="calendar-tabs" role="tablist" aria-label="チーム選択">
+        <button class="active" data-team="TOP" role="tab">トップチーム <span id="top-count">0</span></button>
+        <button data-team="U21" role="tab">FC東京U-21 <span id="u21-count">0</span></button>
+      </div>
+      <div id="calendar-match-list" class="calendar-match-list" aria-live="polite"></div>
+      <div id="calendar-empty" class="empty-state" hidden>掲載中の日程はありません。</div>
+    </section>
+
+    <section class="disclaimer shell calendar-disclaimer">
+      <p>本サイトは個人が運営する非公式サイトです。FC東京、Jリーグおよび各大会主催者とは関係ありません。</p>
+      <p>日程・会場・キックオフ時刻は必ず公式発表をご確認ください。公開カレンダーを追加した後は、マスター更新に合わせて予定が更新されます。</p>
+    </section>
+  </main>
+
+  <footer class="ticket-footer shell"><a href="../">← ツール一覧へ</a><span>UNOFFICIAL FC TOKYO SUPPORTER TOOL</span></footer>
+  <div id="copy-toast" class="copy-toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

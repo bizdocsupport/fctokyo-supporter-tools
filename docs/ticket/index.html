@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="FC東京の試合日とチケット発売日をひとつの一覧で確認できる非公式ツールです。">
+  <meta name="theme-color" content="#071a52">
+  <title>クラブチケットナビ｜FC東京版</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body class="ticket-page">
+  <header class="global-header">
+    <a class="site-brand" href="../"><span class="brand-bars"><i></i><i></i></span><span>FC TOKYO<br>SUPPORTER TOOLS</span></a>
+    <nav class="header-nav"><a href="../calendar/">CALENDAR</a><a href="#news">NEWS</a></nav>
+  </header>
+
+  <main>
+    <section class="ticket-hero shell">
+      <div>
+        <p class="kicker">CLUB TICKET NAVI / FC TOKYO</p>
+        <h1>試合日と発売日を、<br><span>ひとつの一覧で。</span></h1>
+        <p class="ticket-subtitle" id="subtitle">FC東京版・非公式</p>
+      </div>
+      <div class="update-panel">
+        <span>LAST UPDATED</span>
+        <strong id="last-updated">読み込み中</strong>
+        <small id="data-status">DATA LOADING</small>
+      </div>
+    </section>
+
+    <section class="controls-section shell" aria-label="一覧の絞り込み">
+      <div class="control-group">
+        <span class="control-label">開催区分</span>
+        <div class="segmented" id="side-filter">
+          <button class="active" data-value="ALL">すべて</button>
+          <button data-value="HOME">ホーム</button>
+          <button data-value="AWAY">アウェイ</button>
+        </div>
+      </div>
+      <div class="control-group competition-control">
+        <span class="control-label">大会</span>
+        <select id="competition-filter">
+          <option value="ALL">すべて</option>
+          <option value="Ｊ１リーグ">J1リーグ</option>
+          <option value="ＪリーグＹＢＣルヴァンカップ">ルヴァンカップ</option>
+          <option value="天皇杯">天皇杯</option>
+          <option value="その他試合">その他試合</option>
+        </select>
+      </div>
+      <label class="toggle-row"><input id="hide-finished" type="checkbox" checked><span class="toggle-ui"></span><span>終了済みを非表示</span></label>
+    </section>
+
+    <section class="summary-bar shell">
+      <div><span class="legend-dot home"></span>ホーム</div>
+      <div><span class="legend-dot away"></span>アウェイ</div>
+      <strong><span id="result-count">0</span> MATCHES</strong>
+    </section>
+
+    <section class="match-section shell">
+      <div id="desktop-table" class="table-wrap" aria-live="polite"></div>
+      <div id="mobile-cards" class="mobile-card-list" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state" hidden>該当する試合はありません。</div>
+      <p class="data-note">アウェイではホームクラブ発表の一般発売日時を表示します。Googleカレンダーへの追加は、発売日時が確定した試合のみ利用できます。</p>
+    </section>
+
+    <section id="news" class="news-section shell">
+      <div class="section-title-row">
+        <div><p class="kicker">TICKET NEWS</p><h2>FC東京 チケットニュース</h2></div>
+        <a id="official-news-link" class="outline-button" href="https://www.fctokyo.co.jp/news/?slug=ticket" target="_blank" rel="noreferrer">公式一覧 ↗</a>
+      </div>
+      <button id="news-toggle" class="news-toggle" aria-expanded="true">取得済みニュースを閉じる <span>−</span></button>
+      <div id="news-list" class="news-list"></div>
+    </section>
+
+    <section class="disclaimer shell">
+      <p id="update-schedule">データは毎日7:00・19:00（日本時間）に自動更新します。</p>
+      <p id="disclaimer-text">本サイトは個人が運営する非公式サイトです。掲載内容は購入前に必ず公式情報をご確認ください。</p>
+    </section>
+  </main>
+
+  <footer class="ticket-footer shell"><a href="../">← ツール一覧へ</a><span>UNOFFICIAL FC TOKYO SUPPORTER TOOL</span></footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

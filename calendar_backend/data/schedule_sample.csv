@@ -1,0 +1,11 @@
+﻿match_id,team,competition,round,status,candidate_start,candidate_end,candidate_dates,confirmed_date,kickoff,duration_minutes,home_away,opponent,venue,official_url,ticket_url,note,enabled
+U21-2026-04-OKAYAMA,U21,U-21 Jリーグ 交流戦,第4節,確定,,,,2026-12-06,14:00,120,AWAY,U-21 ファジアーノ岡山,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,,TRUE
+U21-2026-06-NAGOYA,U21,U-21 Jリーグ 交流戦,第6節,確定,,,,2026-12-19,15:00,120,HOME,U-21 名古屋グランパス,AGFフィールド,,https://club-ticket-navi-fctokyo-test.streamlit.app/,,TRUE
+U21-2027-06-IWATA,U21,U-21 Jリーグ,第6節,候補日あり,2027-02-13,2027-02-15,2/13(土)・2/14(日)・2/15(月),,,120,AWAY,U-21 ジュビロ磐田,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,開催日時確定後、同じイベントを正式日時へ更新,TRUE
+U21-2027-07-KAWASAKI,U21,U-21 Jリーグ,第7節,候補日あり,2027-02-20,2027-02-22,2/20(土)・2/21(日)・2/22(月),,,120,AWAY,U-21 川崎フロンターレ,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,開催日時確定後、同じイベントを正式日時へ更新,TRUE
+U21-2027-08-URAWA,U21,U-21 Jリーグ,第8節,候補日あり,2027-02-27,2027-03-01,2/27(土)・2/28(日)・3/1(月),,,120,HOME,U-21 浦和レッズ,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,候補期間を終日予定1件で登録,TRUE
+U21-2027-09-SHIMIZU,U21,U-21 Jリーグ,第9節,候補日あり,2027-03-06,2027-03-08,3/6(土)・3/7(日)・3/8(月),,,120,AWAY,U-21 清水エスパルス,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,開催日時確定後、同じイベントを正式日時へ更新,TRUE
+U21-2027-10-VERDY,U21,U-21 Jリーグ,第10節,候補日あり,2027-03-13,2027-03-15,3/13(土)・3/14(日)・3/15(月),,,120,HOME,U-21 東京ヴェルディ,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,開催日時確定後、同じイベントを正式日時へ更新,TRUE
+U21-2027-PO-01,U21,U-21 Jリーグ プレーオフ,第1節,進出時,2027-04-03,2027-04-04,4/3(土)・4/4(日),,,120,HOME,対戦相手未定,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,,TRUE
+U21-2027-PO-02,U21,U-21 Jリーグ プレーオフ,第2節,進出時,2027-04-10,2027-04-11,4/10(土)・4/11(日),,,120,AWAY,対戦相手未定,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,,TRUE
+U21-2027-PO-FINAL,U21,U-21 Jリーグ プレーオフ,決勝・3位決定戦,進出時,2027-04-17,2027-04-18,4/17(土)・4/18(日),,,120,,対戦相手未定,,,https://club-ticket-navi-fctokyo-test.streamlit.app/,,TRUE
