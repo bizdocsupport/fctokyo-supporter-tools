@@ -4,26 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>初心者必須チャント｜A4印刷</title>
-  <link rel="stylesheet" href="./print.css?v=20260802-1">
+  <title>初心者必須チャント｜折りたたみA4</title>
+  <link rel="stylesheet" href="./print.css?v=20260802-2">
   <script defer src="./chants-data.js?v=20260802-7"></script>
   <script defer src="./lyrics-data.js?v=20260802-7"></script>
   <script defer src="./chant-settings.js?v=20260802-7"></script>
-  <script defer src="./print.js?v=20260802-1"></script>
+  <script defer src="./print.js?v=20260802-2"></script>
 </head>
 <body>
   <div class="screen-toolbar">
-    <div><b>初心者必須チャント A4シート</b><span>「初心者でも必須」に設定した曲だけを印刷します。</span></div>
-    <div><a href="./editor.html">編集画面へ</a><button id="print-button" type="button">印刷する</button></div>
+    <div>
+      <b>初心者必須チャント｜折りたたみA4</b>
+      <span>A4縦1枚を縦・横に半分ずつ折ると、A6サイズで持ち歩けます。</span>
+    </div>
+    <div>
+      <a href="./editor.html">編集画面へ</a>
+      <button id="print-button" type="button">A4で印刷する</button>
+    </div>
   </div>
-  <main class="paper">
-    <header class="sheet-header">
-      <div><p>FC TOKYO / UNOFFICIAL SUPPORTER GUIDE</p><h1>初心者必須<br><span>TOKYO CHANTS</span></h1></div>
-      <div class="sheet-meta"><b id="sheet-count">0</b><span>RECOMMENDED<br>CHANTS</span></div>
-    </header>
-    <p class="sheet-lead">歌詞と使う場面を、試合前にさっと確認するためのA4シート。現地ではコールリーダーと周囲の声に合わせてください。</p>
-    <section id="print-list" class="print-list"></section>
-    <footer><span>fctokyo.xyz / UNOFFICIAL</span><span>DATA UPDATED <b id="updated-label">—</b></span></footer>
+
+  <main id="paper" class="paper" aria-label="折りたたみチャントガイド">
+    <div class="fold-guide fold-guide-v" aria-hidden="true"><span>折り線</span></div>
+    <div class="fold-guide fold-guide-h" aria-hidden="true"><span>折り線</span></div>
+    <section id="panel-1" class="fold-panel fold-panel-1"></section>
+    <section id="panel-2" class="fold-panel fold-panel-2"></section>
+    <section id="panel-3" class="fold-panel fold-panel-3"></section>
+    <section id="panel-4" class="fold-panel fold-panel-4"></section>
   </main>
 </body>
 </html>
