@@ -1,0 +1,19 @@
+FC TOKYO CHANTS PAGE REPAIR
+
+Upload destination on GitHub:
+  fctokyo-supporter-tools / docs / chants
+
+Upload and replace these 4 files:
+  index.html
+  styles.css
+  chants-data.js
+  app.js
+
+After upload, confirm that docs/chants/index.html begins with:
+  <!doctype html>
+
+It must NOT begin with:
+  (() => {
+
+Commit directly to the main branch.
+Then open https://fctokyo.xyz/chants/ and reload.
