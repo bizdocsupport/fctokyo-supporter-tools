@@ -23,3 +23,99 @@
 @media(max-width:1050px){.portal-page .tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portal-page .tool-card:nth-child(n){grid-column:auto}.portal-page .tool-card:last-child{grid-column:1/-1}.support-link-grid,.hashtag-grid{grid-template-columns:1fr 1fr}.account-grid .support-link-card:last-child{grid-column:1/-1}}
 @media(max-width:700px){.support-link-grid,.hashtag-grid,.youtube-grid{grid-template-columns:1fr}.account-grid .support-link-card:last-child{grid-column:auto}.link-section-heading{grid-template-columns:42px 1fr}.construction-actions{flex-direction:column}.construction-actions .primary-action,.construction-actions .secondary-action{width:100%}.construction-wave{right:-120px;opacity:.22}}
 @media(max-width:620px){.portal-page .tool-grid{grid-template-columns:1fr}.portal-page .tool-card:last-child{grid-column:auto}.links-hero{padding:64px 0 46px}.links-hero h1{font-size:50px}.link-collection{padding:44px 0}.support-link-card{min-height:150px;padding:18px}.hashtag-card{min-height:175px}.construction-main{padding-top:11vh}.construction-main h1{font-size:49px}}
+
+
+/* Portal personal hashtag cards */
+.portal-page .tool-card:nth-child(6),
+.portal-page .tool-card:nth-child(7){
+  grid-column:span 3
+}
+.hachikatsu-card{
+  background:#061b53
+}
+.hachikatsu-card:after{
+  background:linear-gradient(180deg,rgba(6,27,83,0) 34%,rgba(6,17,47,.98) 79%)
+}
+.ramen-card{
+  background:#f1e9da;
+  color:#101722
+}
+.ramen-card:after{
+  background:linear-gradient(180deg,rgba(241,233,218,0) 35%,rgba(241,233,218,.98) 79%)
+}
+.ramen-card .tool-copy p{
+  color:var(--red)
+}
+.ramen-card .tool-copy span{
+  color:#4d5867
+}
+.personal-tag-graphic{
+  overflow:hidden
+}
+.personal-tag-graphic:before{
+  content:"";
+  position:absolute;
+  width:330px;
+  height:330px;
+  border-radius:50%;
+  right:-68px;
+  top:-72px;
+  border:38px solid rgba(255,255,255,.08)
+}
+.personal-tag-hash{
+  position:absolute;
+  left:34px;
+  top:58px;
+  color:rgba(255,255,255,.18);
+  font-size:190px;
+  font-weight:800;
+  line-height:.8;
+  letter-spacing:-.11em
+}
+.personal-tag-graphic strong{
+  position:absolute;
+  right:28px;
+  top:46px;
+  color:#fff;
+  font-size:70px;
+  line-height:.86;
+  letter-spacing:-.075em;
+  text-align:right
+}
+.personal-tag-graphic small{
+  position:absolute;
+  right:31px;
+  top:122px;
+  color:rgba(255,255,255,.68);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.16em
+}
+.hachikatsu-graphic{
+  background:
+    radial-gradient(circle at 22% 36%,rgba(229,31,43,.42),transparent 26%),
+    linear-gradient(145deg,#071a52 0 58%,#e51f2b 58%)
+}
+.ramen-graphic{
+  background:
+    radial-gradient(circle at 30% 38%,rgba(229,31,43,.2),transparent 29%),
+    linear-gradient(145deg,#efe7d6 0 58%,#0758d9 58%)
+}
+.ramen-graphic .personal-tag-hash{
+  color:rgba(7,26,82,.12)
+}
+.ramen-graphic strong{
+  color:#101722
+}
+.ramen-graphic small{
+  color:#3f4a5a
+}
+@media(max-width:1050px){
+  .portal-page .tool-card:nth-child(6),
+  .portal-page .tool-card:nth-child(7){
+    grid-column:auto
+  }
+  .portal-page .tool-card:last-child{
+    grid-column:auto
+  }
+}
