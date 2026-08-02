@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="FC東京サポーター向けの非公式便利ツール。チケット発売日、試合日程、チャント情報をまとめています。">
+  <meta name="theme-color" content="#071a52">
+  <title>FC TOKYO SUPPORTER TOOLS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site-v2.css?v=20260802-2">
+</head>
+<body class="portal-page">
+  <header class="global-header">
+    <a class="site-brand" href="/"><span class="brand-bars"><i></i><i></i></span><span>FC TOKYO<br>SUPPORTER TOOLS</span></a>
+    <a class="header-link" href="https://x.com/hillslifexxx" target="_blank" rel="noreferrer">運営者X ↗</a>
+  </header>
+  <main>
+    <section class="portal-hero shell">
+      <p class="kicker">UNOFFICIAL / PERSONAL PROJECT</p>
+      <h1>探す時間を、<br><span>応援する時間へ。</span></h1>
+      <p class="portal-lead">FC東京の試合・チケット・カレンダー・応援歌を、<br>見つけやすく、使いやすく。</p>
+    </section>
+    <section class="tool-grid shell">
+      <a class="tool-card ticket-card" href="ticket/">
+        <div class="tool-number">01</div>
+        <div class="tool-graphic ticket-graphic" aria-hidden="true"><span></span><span></span><strong>AWAY<br>TICKET</strong></div>
+        <div class="tool-copy">
+          <p>CLUB TICKET NAVI</p>
+          <h2>チケット発売日</h2>
+          <span>試合日と一般発売日を一覧で確認する →</span>
+        </div>
+      </a>
+      <a class="tool-card calendar-card" href="calendar/">
+        <div class="tool-number">02</div>
+        <div class="tool-graphic calendar-graphic" aria-hidden="true">
+          <div class="calendar-sheet"><b>08</b><span>MATCH<br>CALENDAR</span></div>
+        </div>
+        <div class="tool-copy">
+          <p>MATCH CALENDAR</p>
+          <h2>試合日程カレンダー</h2>
+          <span>トップ＋U-21をGoogleカレンダーへ →</span>
+        </div>
+      </a>
+      <a class="tool-card chant-card" href="chants/">
+        <div class="tool-number">03</div>
+        <div class="tool-graphic chant-graphic" aria-hidden="true">
+          <strong>TOKYO<br>CHANTS</strong>
+          <div class="chant-wave">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="tool-copy">
+          <p>SUPPORTER SONG GUIDE</p>
+          <h2>FC東京チャントガイド</h2>
+          <span>いつ歌う？ どれから覚える？ 初観戦でも迷わない応援歌ガイド →</span>
+        </div>
+      </a>
+    </section>
+    <section class="portal-note shell">
+      <p>このサイトは個人が運営する非公式サイトです。FC東京、Jリーグ、各クラブおよび各主催者とは関係ありません。</p>
+    </section>
+  </main>
+
+  <footer class="portal-footer shell"><span>FC TOKYO SUPPORTER TOOLS</span><span>© <span id="year"></span></span></footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</body>
+</html>
