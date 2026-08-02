@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">蝗活カードビジュアル</title>
+  <desc id="desc">FC東京をイメージした青と赤の背景に、スタジアムグルメを描いたイラスト</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071a52"/>
+      <stop offset=".55" stop-color="#0758d9"/>
+      <stop offset=".56" stop-color="#d91f32"/>
+      <stop offset="1" stop-color="#6c1120"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".25" cy=".25" r=".7">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#06102f" flood-opacity=".55"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="760" fill="url(#bg)"/>
+  <rect width="1200" height="760" fill="url(#glow)"/>
+  <g opacity=".11" fill="none" stroke="#fff" stroke-width="22">
+    <circle cx="1015" cy="90" r="220"/>
+    <circle cx="1015" cy="90" r="150"/>
+  </g>
+  <g filter="url(#shadow)" transform="translate(115 110) rotate(-5 470 250)">
+    <path d="M90 170h760l-68 360H162z" fill="#f1e6cd" stroke="#fff" stroke-width="18"/>
+    <path d="M128 198h684l-18 91H145z" fill="#d8c19b" opacity=".55"/>
+    <g transform="translate(180 210)">
+      <circle cx="95" cy="88" r="68" fill="#da7c28"/>
+      <circle cx="95" cy="88" r="44" fill="#f1a53e"/>
+      <circle cx="250" cy="88" r="68" fill="#bd5724"/>
+      <circle cx="250" cy="88" r="43" fill="#ef8a31"/>
+      <circle cx="405" cy="88" r="68" fill="#d9802b"/>
+      <circle cx="405" cy="88" r="44" fill="#f2b04e"/>
+      <circle cx="560" cy="88" r="68" fill="#b94c21"/>
+      <circle cx="560" cy="88" r="43" fill="#e8812e"/>
+      <g stroke="#f7d596" stroke-width="11" stroke-linecap="round">
+        <path d="M95 18V-85"/><path d="M250 18V-85"/><path d="M405 18V-85"/><path d="M560 18V-85"/>
+      </g>
+      <g fill="#f6efdc" opacity=".92">
+        <circle cx="70" cy="72" r="8"/><circle cx="114" cy="104" r="9"/><circle cx="231" cy="64" r="8"/>
+        <circle cx="276" cy="109" r="7"/><circle cx="382" cy="72" r="8"/><circle cx="429" cy="104" r="9"/>
+        <circle cx="539" cy="62" r="8"/><circle cx="582" cy="109" r="7"/>
+      </g>
+    </g>
+    <g transform="translate(630 300)">
+      <ellipse cx="95" cy="115" rx="115" ry="62" fill="#091a48"/>
+      <path d="M-8 92h206l-26 138H18z" fill="#fff"/>
+      <path d="M18 114h154l-18 91H36z" fill="#e51f2b"/>
+      <circle cx="95" cy="88" r="65" fill="#fff7d6"/>
+      <circle cx="95" cy="88" r="34" fill="#f3b22f"/>
+      <path d="M61 55c33-31 75-24 93 7" fill="none" stroke="#6c3c1f" stroke-width="15" stroke-linecap="round"/>
+    </g>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#fff">
+    <text x="72" y="96" font-size="22" font-weight="700" letter-spacing="7">FOOD / AWAY TRIP</text>
+    <text x="72" y="674" font-size="116" font-weight="900" letter-spacing="-8"># INAKATSU</text>
+    <text x="78" y="716" font-size="22" font-weight="700" letter-spacing="5" opacity=".72">@HILLSLIFEXXX</text>
+  </g>
+</svg>

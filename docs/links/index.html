@@ -10,6 +10,98 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/site.css">
+
+  <style>
+    .my-post-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px
+    }
+    .my-post-card{
+      position:relative;
+      min-height:380px;
+      overflow:hidden;
+      border:1px solid #d8dde5;
+      background:#071a52;
+      color:#fff;
+      box-shadow:0 18px 46px rgba(12,29,65,.09);
+      transition:transform .3s ease,box-shadow .3s ease
+    }
+    .my-post-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 26px 60px rgba(12,29,65,.16)
+    }
+    .my-post-visual{
+      position:absolute;
+      inset:0
+    }
+    .my-post-visual img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      transition:transform .6s cubic-bezier(.2,.7,.2,1)
+    }
+    .my-post-card:hover .my-post-visual img{
+      transform:scale(1.035)
+    }
+    .my-post-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,rgba(5,17,48,.03) 34%,rgba(5,17,48,.96) 82%)
+    }
+    .my-post-copy{
+      position:absolute;
+      z-index:2;
+      left:26px;
+      right:26px;
+      bottom:24px
+    }
+    .my-post-copy small{
+      color:#c8ff37;
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:.16em
+    }
+    .my-post-copy h3{
+      margin:9px 0 8px;
+      font-size:clamp(32px,4vw,52px);
+      line-height:1;
+      letter-spacing:-.055em
+    }
+    .my-post-copy p{
+      margin:0;
+      color:rgba(255,255,255,.76);
+      font-size:12px;
+      line-height:1.7
+    }
+    .my-post-arrow{
+      position:absolute;
+      z-index:3;
+      right:22px;
+      top:19px;
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(255,255,255,.45);
+      background:rgba(7,26,82,.25);
+      backdrop-filter:blur(8px);
+      font-size:18px
+    }
+    .links-page .link-section-heading .section-note{
+      margin:10px 0 0;
+      color:#7b8697;
+      font-size:12px;
+      line-height:1.7
+    }
+    @media(max-width:800px){
+      .my-post-grid{grid-template-columns:1fr}
+      .my-post-card{min-height:330px}
+    }
+  </style>
 </head>
 <body class="links-page">
   <header class="global-header">
@@ -21,7 +113,7 @@
     <section class="links-hero shell">
       <p class="kicker">MY DAILY CHECK / PERSONAL LINKS</p>
       <h1>よく見る情報へ、<br><span>ここからすぐに。</span></h1>
-      <p>FC東京を追うときにチェックしているアカウント、ハッシュタグ、YouTubeをまとめた個人用リンク集です。</p>
+      <p>自分のFC東京関連投稿と、普段チェックしているアカウント、ハッシュタグ、YouTubeをまとめた個人用リンク集です。</p>
     </section>
 
     <section class="link-collection shell">
@@ -39,8 +131,47 @@
       </div>
     </section>
 
+
     <section class="link-collection shell">
-      <div class="link-section-heading"><span>02</span><div><p class="kicker">X HASHTAGS</p><h2>チェックしているハッシュタグ</h2></div></div>
+      <div class="link-section-heading">
+        <span>02</span>
+        <div>
+          <p class="kicker">MY POSTS / @HILLSLIFEXXX</p>
+          <h2>自分のFC東京関連投稿</h2>
+          <p class="section-note">Xの投稿を、アカウントとハッシュタグで絞り込んで最新順に表示します。</p>
+        </div>
+      </div>
+      <div class="my-post-grid">
+        <a class="my-post-card"
+           href="https://x.com/search?q=from%3Ahillslifexxx%20%23%E8%9D%97%E6%B4%BB&src=typed_query&f=live"
+           target="_blank"
+           rel="noreferrer">
+          <div class="my-post-visual"><img src="assets/inakatsu-card.svg" alt="蝗活の投稿を見る"></div>
+          <span class="my-post-arrow">↗</span>
+          <div class="my-post-copy">
+            <small>FOOD / AWAY TRIP</small>
+            <h3>#蝗活</h3>
+            <p>@hillslifexxx の #蝗活 を最新順で見る</p>
+          </div>
+        </a>
+
+        <a class="my-post-card"
+           href="https://x.com/search?q=from%3Ahillslifexxx%20%23FC%E6%9D%B1%E4%BA%AC%E3%83%A9%E3%83%BC%E3%83%A1%E3%83%B3%E9%83%A8&src=typed_query&f=live"
+           target="_blank"
+           rel="noreferrer">
+          <div class="my-post-visual"><img src="assets/ramen-card.svg" alt="FC東京ラーメン部の投稿を見る"></div>
+          <span class="my-post-arrow">↗</span>
+          <div class="my-post-copy">
+            <small>FC TOKYO RAMEN CLUB</small>
+            <h3>#FC東京ラーメン部</h3>
+            <p>@hillslifexxx のラーメン投稿を最新順で見る</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="link-collection shell">
+      <div class="link-section-heading"><span>03</span><div><p class="kicker">X HASHTAGS</p><h2>チェックしているハッシュタグ</h2></div></div>
       <div class="hashtag-grid">
         <a class="hashtag-card" href="https://x.com/search?q=%23%E8%9D%97%E6%B4%BB&amp;src=typed_query&amp;f=live" target="_blank" rel="noreferrer"><small>LIVE SEARCH</small><strong>#蝗活</strong><span>最新の投稿を見る ↗</span></a>
         <a class="hashtag-card" href="https://x.com/search?q=%23FC%E6%9D%B1%E4%BA%AC%E3%83%A9%E3%83%BC%E3%83%A1%E3%83%B3%E9%83%A8&amp;src=typed_query&amp;f=live" target="_blank" rel="noreferrer"><small>LIVE SEARCH</small><strong>#FC東京ラーメン部</strong><span>最新の投稿を見る ↗</span></a>
@@ -49,7 +180,7 @@
     </section>
 
     <section class="link-collection shell youtube-collection">
-      <div class="link-section-heading"><span>03</span><div><p class="kicker">YOUTUBE</p><h2>チェックしているYouTube</h2></div></div>
+      <div class="link-section-heading"><span>04</span><div><p class="kicker">YOUTUBE</p><h2>チェックしているYouTube</h2></div></div>
       <div class="support-link-grid youtube-grid">
         <a class="support-link-card youtube-card official-youtube" href="https://www.youtube.com/@fctokyoofficial" target="_blank" rel="noreferrer">
           <div class="support-link-icon youtube-icon">▶</div><div class="support-link-copy"><small>OFFICIAL CHANNEL</small><h3>FC東京公式</h3><p>@fctokyoofficial</p></div><span class="support-link-arrow">↗</span>
