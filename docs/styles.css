@@ -1,160 +1,210 @@
-(() => {
-  'use strict';
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071a3b">
+  <meta name="description" content="FC東京のチャントを、初心者にも分かりやすく場面別・難易度別に紹介する非公式ガイド。">
+  <meta property="og:title" content="TOKYO CHANTS｜FC東京チャントガイド">
+  <meta property="og:description" content="いつ歌う？ どれから覚える？ 初観戦でも迷わないFC東京チャントガイド。">
+  <meta property="og:type" content="website">
+  <title>TOKYO CHANTS｜FC東京チャントガイド</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071a3b'/%3E%3Cpath d='M13 36h7l4-14 7 27 7-34 6 21h8' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='52' cy='36' r='5' fill='%23e82f3f'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./chants-data.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
 
-  const data = window.CHANTS_DATA;
-  if (!data) return;
+  <header class="site-header" id="top">
+    <a class="brand" href="../" aria-label="fctokyo.xyz トップへ">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span><b>fctokyo.xyz</b><small>UNOFFICIAL SUPPORTER TOOLS</small></span>
+    </a>
+    <nav class="header-nav" aria-label="ページ内メニュー">
+      <a href="#starter">はじめて</a>
+      <a href="#library">チャント一覧</a>
+      <a href="#away2019">2019企画</a>
+      <a class="top-link" href="../">サイトTOP <span>↗</span></a>
+    </nav>
+    <button class="menu-button" type="button" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span></button>
+  </header>
 
-  const $ = (selector, root = document) => root.querySelector(selector);
-  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const esc = (value = '') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-  const normalize = value => String(value || '').normalize('NFKC').toLowerCase().replace(/\s+/g, '');
-  const youtubeSearch = query => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-
-  const state = { filter: 'all', search: '', sort: 'recommended' };
-  const modal = $('#chant-modal');
-  let lastFocus = null;
-
-  function levelHtml(level) {
-    return `<span class="chant-level" aria-label="覚えやすさ ${level}/3">${[1,2,3].map(n => `<i class="${n <= level ? 'on' : ''}"></i>`).join('')}</span>`;
-  }
-
-  function buildStarter() {
-    const container = $('#starter-road');
-    const chants = data.beginner.map(id => data.chants.find(item => item.id === id)).filter(Boolean);
-    container.innerHTML = chants.map((item, index) => `
-      <button class="starter-card" type="button" data-id="${esc(item.id)}">
-        <span>${String(index + 1).padStart(2, '0')}</span>
-        <p class="starter-label">${esc(item.scene).toUpperCase()}</p>
-        <h3>${esc(item.title)}</h3>
-        <p>${esc(item.tip)}</p>
-        <b aria-hidden="true">＋</b>
-      </button>`).join('');
-  }
-
-  function matches(item) {
-    const inFilter = state.filter === 'all' || item.tags.includes(state.filter);
-    if (!inFilter) return false;
-    if (!state.search) return true;
-    const haystack = normalize([item.title, ...(item.aliases || []), item.original, item.scene, item.summary, item.tip, ...item.tags].join(' '));
-    return haystack.includes(normalize(state.search));
-  }
-
-  function ordered(items) {
-    const copy = [...items];
-    if (state.sort === 'easy') return copy.sort((a,b) => a.difficulty - b.difficulty || a.title.localeCompare(b.title, 'ja'));
-    if (state.sort === 'name') return copy.sort((a,b) => a.title.localeCompare(b.title, 'ja'));
-    return copy.sort((a,b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || data.chants.indexOf(a) - data.chants.indexOf(b));
-  }
-
-  function buildGrid() {
-    const list = ordered(data.chants.filter(matches));
-    $('#result-count').textContent = list.length;
-    $('#empty-result').hidden = list.length > 0;
-    $('#chant-grid').innerHTML = list.map((item, index) => `
-      <button class="chant-card" type="button" data-id="${esc(item.id)}">
-        <div class="chant-top">
-          <span class="chant-index">${String(index + 1).padStart(2, '0')}</span>
-          ${levelHtml(item.difficulty)}
+  <main id="main">
+    <section class="hero">
+      <div class="hero-noise" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="wave wave-a" aria-hidden="true"></div>
+      <div class="wave wave-b" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow"><span>FC TOKYO</span> UNOFFICIAL CHANT GUIDE</p>
+        <h1><span>TOKYO</span><br>CHANTS</h1>
+        <p class="hero-copy">声をひとつに。<br><strong>初観戦でも迷わない、青赤の歌ガイド。</strong></p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#starter"><span>まず覚える5曲</span><b>↓</b></a>
+          <a class="button button-ghost" href="#library"><span>すべてのチャント</span><b>40+</b></a>
         </div>
-        <p class="chant-scene">${esc(item.scene).toUpperCase()}</p>
-        <h3>${esc(item.title)}</h3>
-        ${item.aliases?.length ? `<p class="aliases">別名：${item.aliases.map(esc).join(' / ')}</p>` : '<p class="aliases">&nbsp;</p>'}
-        <div class="chant-bottom"><p>原曲：${esc(item.original)}</p><b aria-hidden="true">＋</b></div>
-      </button>`).join('');
-  }
+        <p class="hero-note">歌詞・音源は各提供元へ。ここでは「いつ歌う？」「どう覚える？」を整理しています。</p>
+      </div>
+      <div class="hero-side" aria-label="このページの特徴">
+        <div class="hero-stat"><b>01</b><span>場面で探す</span></div>
+        <div class="hero-stat"><b>02</b><span>難易度で選ぶ</span></div>
+        <div class="hero-stat"><b>03</b><span>原曲から覚える</span></div>
+      </div>
+      <div class="scroll-hint" aria-hidden="true"><span>SCROLL</span><i></i></div>
+    </section>
 
-  function buildAwayTimeline() {
-    $('#away-timeline').innerHTML = data.away2019.map(item => `
-      <li>
-        <div><h3>${esc(item.title)}</h3><p>${esc(item.original)}</p></div>
-        <a href="${youtubeSearch(item.query)}" target="_blank" rel="noreferrer" aria-label="${esc(item.title)}の動画を探す">↗</a>
-      </li>`).join('');
-  }
+    <section class="intro-strip" aria-label="初心者向けメッセージ">
+      <p><strong>歌えなくても大丈夫。</strong> 手拍子だけ、声だけ、サビだけ。できるところから参加すればOK。</p>
+      <span>ENJOY THE STADIUM.</span>
+    </section>
 
-  function openModal(id, trigger) {
-    const item = data.chants.find(chant => chant.id === id);
-    if (!item) return;
-    lastFocus = trigger || document.activeElement;
-    const index = data.chants.indexOf(item) + 1;
-    $('#modal-number').textContent = String(index).padStart(2, '0');
-    $('#modal-scene').textContent = item.scene.toUpperCase();
-    $('#modal-title').textContent = item.title;
-    $('#modal-alias').textContent = item.aliases?.length ? `別名：${item.aliases.join(' / ')}` : '';
-    $('#modal-level').innerHTML = levelHtml(item.difficulty);
-    $('#modal-original').textContent = item.original;
-    $('#modal-summary').textContent = item.summary;
-    $('#modal-tip').textContent = item.tip;
-    $('#modal-chant-link').href = data.sources.chantNavi;
-    $('#modal-video-link').href = youtubeSearch(`FC東京 ${item.title} チャント`);
-    $('#modal-original-link').href = youtubeSearch(`${item.original} 原曲`);
-    modal.showModal();
-    $('.modal-close', modal).focus();
-  }
+    <section class="section starter" id="starter">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">01 / START HERE</p>
+          <h2>まず覚える、<em>5曲。</em></h2>
+        </div>
+        <p>初めてゴール裏へ行く人向けに、短さ・登場頻度・入りやすさを基準に選びました。全部覚えなくても、1曲知っているだけで観戦の景色が変わります。</p>
+      </div>
+      <div class="starter-road" id="starter-road" aria-live="polite"></div>
+    </section>
 
-  function closeModal() {
-    if (modal.open) modal.close();
-    lastFocus?.focus?.();
-  }
+    <section class="section quick-guide" aria-labelledby="quick-title">
+      <div class="quick-card dark">
+        <p class="mini-label">WHEN TO SING?</p>
+        <h2 id="quick-title">現地では、<br>周りを見ればわかる。</h2>
+        <div class="pulse-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="quick-card guide-list">
+        <article><span>01</span><div><h3>コールリーダーを見る</h3><p>始まる合図やテンポは、ゴール裏中央の動きが目印。</p></div></article>
+        <article><span>02</span><div><h3>最初は手拍子から</h3><p>メロディが分からなくても、周囲の拍に合わせれば一体感を楽しめます。</p></div></article>
+        <article><span>03</span><div><h3>無理に跳ばなくてOK</h3><p>体調と周囲に配慮し、声だけ・拍手だけでも十分な応援です。</p></div></article>
+      </div>
+    </section>
 
-  function bindEvents() {
-    $('#filter-row').addEventListener('click', event => {
-      const button = event.target.closest('[data-filter]');
-      if (!button) return;
-      state.filter = button.dataset.filter;
-      $$('.filter').forEach(item => item.classList.toggle('active', item === button));
-      buildGrid();
-    });
+    <section class="section library" id="library">
+      <div class="section-heading library-heading">
+        <div>
+          <p class="section-number">02 / CHANT LIBRARY</p>
+          <h2>場面から、<em>探す。</em></h2>
+        </div>
+        <p>曲名が分からなくても大丈夫。「得点後」「試合前後」「カップ戦」など、使われる場面の目安から探せます。</p>
+      </div>
 
-    $('#search-input').addEventListener('input', event => {
-      state.search = event.target.value;
-      buildGrid();
-    });
+      <div class="library-controls">
+        <label class="search-box">
+          <span aria-hidden="true"></span>
+          <span class="sr-only">チャントを検索</span>
+          <input id="search-input" type="search" placeholder="曲名・原曲・キーワードで検索" autocomplete="off">
+          <kbd>/</kbd>
+        </label>
+        <div class="filter-row" id="filter-row" role="group" aria-label="カテゴリーで絞り込み">
+          <button class="filter active" type="button" data-filter="all">すべて</button>
+          <button class="filter" type="button" data-filter="beginner">初心者</button>
+          <button class="filter" type="button" data-filter="match">試合中</button>
+          <button class="filter" type="button" data-filter="goal">得点・勝利</button>
+          <button class="filter" type="button" data-filter="before-after">試合前後</button>
+          <button class="filter" type="button" data-filter="cup">カップ戦</button>
+          <button class="filter" type="button" data-filter="derby">ダービー</button>
+          <button class="filter" type="button" data-filter="classic">クラシック</button>
+        </div>
+      </div>
 
-    $('#sort-select').addEventListener('change', event => {
-      state.sort = event.target.value;
-      buildGrid();
-    });
+      <div class="result-bar">
+        <p><strong id="result-count">0</strong> CHANTS</p>
+        <label>並び順
+          <select id="sort-select">
+            <option value="recommended">おすすめ順</option>
+            <option value="easy">やさしい順</option>
+            <option value="name">曲名順</option>
+          </select>
+        </label>
+      </div>
+      <div class="chant-grid" id="chant-grid" aria-live="polite"></div>
+      <div class="empty-result" id="empty-result" hidden>
+        <b>NO CHANTS FOUND.</b>
+        <p>検索語やカテゴリーを変えてみてください。</p>
+      </div>
+    </section>
 
-    document.addEventListener('click', event => {
-      const card = event.target.closest('[data-id]');
-      if (card) openModal(card.dataset.id, card);
-    });
+    <section class="away-feature" id="away2019">
+      <div class="away-inner">
+        <div class="away-lead">
+          <p class="section-number light">03 / ARCHIVE 2019</p>
+          <p class="away-kicker">8 AWAY GAMES.<br>8 NEW SONGS.</p>
+          <h2>アウェイ8連戦、<br><em>毎週、新チャント。</em></h2>
+          <p>2019年、8週連続で新曲を披露した企画。J-POPを大胆に取り込んだ、FC東京サポーター文化の遊び心が詰まったアーカイブです。</p>
+          <a class="button button-white" href="https://www.youtube.com/results?search_query=FC%E6%9D%B1%E4%BA%AC+2019+8%E9%80%B1%E9%80%A3%E7%B6%9A+%E6%96%B0%E6%9B%B2+%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88" target="_blank" rel="noreferrer"><span>まとめ動画を探す</span><b>↗</b></a>
+        </div>
+        <ol class="away-timeline" id="away-timeline"></ol>
+      </div>
+    </section>
 
-    $('.modal-close', modal).addEventListener('click', closeModal);
-    modal.addEventListener('click', event => {
-      if (event.target === modal) {
-        const rect = modal.getBoundingClientRect();
-        const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
-        if (!inside) closeModal();
-      }
-    });
-    modal.addEventListener('cancel', event => { event.preventDefault(); closeModal(); });
+    <section class="section current-guide">
+      <div class="current-panel">
+        <div>
+          <p class="section-number">04 / CURRENT CHANTS</p>
+          <h2>選手チャントは、<br><em>最新動画で。</em></h2>
+          <p>選手の加入・移籍や新曲発表に合わせて変わるため、固定一覧ではなく直近の現地投稿へ案内します。</p>
+        </div>
+        <div class="current-links">
+          <a href="https://x.com/hashtag/tokyo12?src=hashtag_click" target="_blank" rel="noreferrer"><span class="link-icon">𝕏</span><span><b>#TOKYO12</b><small>最新の発表・現地投稿を探す</small></span><i>↗</i></a>
+          <a href="https://www.youtube.com/results?search_query=FC%E6%9D%B1%E4%BA%AC+%E9%81%B8%E6%89%8B%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88+2026" target="_blank" rel="noreferrer"><span class="link-icon play">▶</span><span><b>YouTube</b><small>直近の選手チャント動画を探す</small></span><i>↗</i></a>
+        </div>
+      </div>
+    </section>
 
-    document.addEventListener('keydown', event => {
-      if (event.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) {
-        event.preventDefault();
-        $('#search-input').focus();
-      }
-    });
+    <section class="section sources" id="sources">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">05 / LISTEN & LEARN</p>
+          <h2>歌詞と音源を、<em>確認。</em></h2>
+        </div>
+        <p>本ページは全文を転載せず、信頼できる既存ページへ案内します。原曲をカラオケで練習するのもおすすめです。</p>
+      </div>
+      <div class="source-grid">
+        <a href="https://www.jchantnavi.com/%E3%80%90%E5%AE%8C%E5%85%A8%E7%B6%B2%E7%BE%85%E3%80%91fc%E6%9D%B1%E4%BA%AC-%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88-%E6%AD%8C%E8%A9%9E-%E5%8E%9F%E6%9B%B2/" target="_blank" rel="noreferrer"><b>01</b><span><strong>Jリーグチャントナビ</strong><small>歌詞・原曲・現地動画をまとめて確認</small></span><i>↗</i></a>
+        <a href="https://soccer-chant.com/fctokyo.html" target="_blank" rel="noreferrer"><b>02</b><span><strong>サッカーチャント集</strong><small>チャント音源と歌詞を確認</small></span><i>↗</i></a>
+        <a href="https://www.joysound.com/web/s/karaoke/feature/fctokyo" target="_blank" rel="noreferrer"><b>03</b><span><strong>JOYSOUND</strong><small>チャント原曲をカラオケで練習</small></span><i>↗</i></a>
+        <a href="https://x.com/hashtag/tokyo12?src=hashtag_click" target="_blank" rel="noreferrer"><b>04</b><span><strong>#TOKYO12</strong><small>新曲・選手チャントの最新情報</small></span><i>↗</i></a>
+      </div>
+    </section>
+  </main>
 
-    const menuButton = $('.menu-button');
-    const nav = $('.header-nav');
-    menuButton.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      menuButton.setAttribute('aria-expanded', String(open));
-      menuButton.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
-    });
-    nav.addEventListener('click', event => {
-      if (event.target.closest('a')) {
-        nav.classList.remove('open');
-        menuButton.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
+  <footer class="site-footer">
+    <div class="footer-brand"><b>TOKYO<br>CHANTS</b><p>VOICE TOGETHER.<br>BLUE & RED FOREVER.</p></div>
+    <div class="footer-copy">
+      <p>本ページは個人が運営する非公式ファンコンテンツです。FC東京および関係団体とは無関係です。</p>
+      <p>歌詞・音源・楽曲等の権利は各権利者に帰属します。掲載内容は曲名・原曲・観戦時の目安を独自に整理したもので、歌詞や音源の全文転載は行っていません。</p>
+      <p>チャントの使用場面や歌い方は試合・時期・現地のリードにより変わることがあります。現地では周囲の案内に従ってください。</p>
+      <small>DATA UPDATED <span id="updated-label">—</span> / © fctokyo.xyz</small>
+    </div>
+    <a class="back-top" href="#top">↑<span>TOP</span></a>
+  </footer>
 
-  $('#updated-label').textContent = data.updated;
-  buildStarter();
-  buildGrid();
-  buildAwayTimeline();
-  bindEvents();
-})();
+  <dialog class="chant-modal" id="chant-modal" aria-labelledby="modal-title">
+    <button class="modal-close" type="button" aria-label="閉じる">×</button>
+    <div class="modal-number" id="modal-number">01</div>
+    <p class="modal-scene" id="modal-scene"></p>
+    <h2 id="modal-title"></h2>
+    <p class="modal-alias" id="modal-alias"></p>
+    <div class="modal-meta">
+      <div><small>覚えやすさ</small><span id="modal-level"></span></div>
+      <div><small>原曲・モチーフ</small><strong id="modal-original"></strong></div>
+    </div>
+    <div class="modal-text"><h3>どんなチャント？</h3><p id="modal-summary"></p></div>
+    <div class="modal-tip"><span>BEGINNER TIP</span><p id="modal-tip"></p></div>
+    <p class="rights-note">歌詞・音源は掲載せず、外部の提供元へ案内します。</p>
+    <div class="modal-actions">
+      <a id="modal-chant-link" href="#" target="_blank" rel="noreferrer">歌詞・音源を見る <span>↗</span></a>
+      <a id="modal-video-link" href="#" target="_blank" rel="noreferrer">現地動画を探す <span>↗</span></a>
+      <a id="modal-original-link" href="#" target="_blank" rel="noreferrer">原曲を聴く <span>↗</span></a>
+    </div>
+  </dialog>
+</body>
+</html>

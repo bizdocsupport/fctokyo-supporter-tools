@@ -1,210 +1,304 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#071a3b">
-  <meta name="description" content="FC東京のチャントを、初心者にも分かりやすく場面別・難易度別に紹介する非公式ガイド。">
-  <meta property="og:title" content="TOKYO CHANTS｜FC東京チャントガイド">
-  <meta property="og:description" content="いつ歌う？ どれから覚える？ 初観戦でも迷わないFC東京チャントガイド。">
-  <meta property="og:type" content="website">
-  <title>TOKYO CHANTS｜FC東京チャントガイド</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071a3b'/%3E%3Cpath d='M13 36h7l4-14 7 27 7-34 6 21h8' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='52' cy='36' r='5' fill='%23e82f3f'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <script defer src="./chants-data.js"></script>
-  <script defer src="./app.js"></script>
-</head>
-<body>
-  <a class="skip-link" href="#main">本文へ移動</a>
+:root {
+  --navy: #06152f;
+  --navy-2: #0a2452;
+  --blue: #0067c9;
+  --blue-bright: #1687ff;
+  --red: #ef3340;
+  --red-dark: #c8182b;
+  --ink: #0a162a;
+  --muted: #657085;
+  --line: #dce2eb;
+  --paper: #f4f6f9;
+  --white: #fff;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Noto Sans JP", system-ui, sans-serif;
+  --header-h: 74px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body { margin: 0; color: var(--ink); background: var(--white); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input, select { font: inherit; }
+button { color: inherit; }
+img { max-width: 100%; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: fixed; left: 12px; top: -60px; z-index: 1000; padding: 10px 14px; background: white; color: var(--ink); font-weight: 800; border-radius: 4px; transition: top .2s; }
+.skip-link:focus { top: 10px; }
 
-  <header class="site-header" id="top">
-    <a class="brand" href="../" aria-label="fctokyo.xyz トップへ">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span><b>fctokyo.xyz</b><small>UNOFFICIAL SUPPORTER TOOLS</small></span>
-    </a>
-    <nav class="header-nav" aria-label="ページ内メニュー">
-      <a href="#starter">はじめて</a>
-      <a href="#library">チャント一覧</a>
-      <a href="#away2019">2019企画</a>
-      <a class="top-link" href="../">サイトTOP <span>↗</span></a>
-    </nav>
-    <button class="menu-button" type="button" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span></button>
-  </header>
+.site-header { position: sticky; top: 0; z-index: 100; height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px,4vw,64px); color: white; background: rgba(6,21,47,.96); border-bottom: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(14px); }
+.brand { display: inline-flex; align-items: center; gap: 13px; color: white; text-decoration: none; }
+.brand-mark { width: 36px; height: 30px; display: flex; align-items: end; gap: 3px; transform: skew(-9deg); }
+.brand-mark i { width: 6px; background: white; display: block; border-radius: 1px; }
+.brand-mark i:nth-child(1) { height: 10px; background: var(--blue-bright); }
+.brand-mark i:nth-child(2) { height: 22px; }
+.brand-mark i:nth-child(3) { height: 30px; background: var(--red); }
+.brand-mark i:nth-child(4) { height: 16px; }
+.brand b { display: block; font: 800 21px/1 var(--font-display); letter-spacing: .04em; }
+.brand small { display: block; margin-top: 5px; font: 600 8px/1 var(--font-body); letter-spacing: .16em; opacity: .65; }
+.header-nav { height: 100%; display: flex; align-items: center; gap: 28px; }
+.header-nav a { position: relative; color: white; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.header-nav a:not(.top-link)::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -8px; height: 2px; background: var(--red); transition: right .25s; }
+.header-nav a:hover::after { right: 0; }
+.header-nav .top-link { display: inline-flex; align-items: center; gap: 15px; padding: 10px 13px 10px 16px; border: 1px solid rgba(255,255,255,.4); }
+.header-nav .top-link span { color: var(--red); }
+.menu-button { display: none; width: 44px; height: 44px; border: 0; background: transparent; padding: 10px; }
+.menu-button span { display: block; width: 24px; height: 2px; margin: 6px 0; background: white; }
 
-  <main id="main">
-    <section class="hero">
-      <div class="hero-noise" aria-hidden="true"></div>
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="wave wave-a" aria-hidden="true"></div>
-      <div class="wave wave-b" aria-hidden="true"></div>
-      <div class="hero-content">
-        <p class="eyebrow"><span>FC TOKYO</span> UNOFFICIAL CHANT GUIDE</p>
-        <h1><span>TOKYO</span><br>CHANTS</h1>
-        <p class="hero-copy">声をひとつに。<br><strong>初観戦でも迷わない、青赤の歌ガイド。</strong></p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="#starter"><span>まず覚える5曲</span><b>↓</b></a>
-          <a class="button button-ghost" href="#library"><span>すべてのチャント</span><b>40+</b></a>
-        </div>
-        <p class="hero-note">歌詞・音源は各提供元へ。ここでは「いつ歌う？」「どう覚える？」を整理しています。</p>
-      </div>
-      <div class="hero-side" aria-label="このページの特徴">
-        <div class="hero-stat"><b>01</b><span>場面で探す</span></div>
-        <div class="hero-stat"><b>02</b><span>難易度で選ぶ</span></div>
-        <div class="hero-stat"><b>03</b><span>原曲から覚える</span></div>
-      </div>
-      <div class="scroll-hint" aria-hidden="true"><span>SCROLL</span><i></i></div>
-    </section>
+.hero { position: relative; min-height: calc(100vh - var(--header-h)); height: min(860px,calc(100vh - var(--header-h))); overflow: hidden; display: grid; grid-template-columns: minmax(0,1fr) 210px; align-items: center; padding: 40px clamp(24px,8vw,130px); color: white; background: radial-gradient(circle at 15% 30%, #12366b 0, transparent 38%), linear-gradient(135deg,#06142d 0%,#071f49 54%,#0a2d65 100%); }
+.hero-noise { position: absolute; inset: 0; opacity: .08; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E"); pointer-events: none; }
+.hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(90deg,black,transparent 78%); }
+.wave { position: absolute; left: -10%; width: 120%; height: 120px; border-radius: 50%; border-top: 2px solid rgba(255,255,255,.16); transform: rotate(-7deg); }
+.wave::before,.wave::after { content: ""; position: absolute; left: 0; width: 100%; height: 100%; border-radius: 50%; border-top: 2px solid; }
+.wave::before { top: 24px; border-color: rgba(22,135,255,.42); }
+.wave::after { top: 50px; border-color: rgba(239,51,64,.5); }
+.wave-a { bottom: 10%; }
+.wave-b { bottom: 1%; left: -5%; opacity: .5; transform: rotate(5deg) scaleY(.7); }
+.hero-content { position: relative; z-index: 2; max-width: 980px; }
+.eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 19px; font: 700 11px/1 var(--font-body); letter-spacing: .17em; color: rgba(255,255,255,.65); }
+.eyebrow span { padding: 6px 9px; color: white; background: var(--red); }
+.hero h1 { margin: 0; font: italic 900 clamp(96px,15vw,210px)/.69 var(--font-display); letter-spacing: -.045em; text-transform: uppercase; text-shadow: 0 16px 50px rgba(0,0,0,.22); }
+.hero h1 span { -webkit-text-stroke: 1.5px rgba(255,255,255,.75); color: transparent; }
+.hero-copy { margin: 43px 0 0; font-size: clamp(18px,2vw,27px); line-height: 1.65; letter-spacing: .03em; }
+.hero-copy strong { font-size: .82em; font-weight: 700; color: rgba(255,255,255,.78); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.button { min-width: 205px; height: 54px; padding: 0 10px 0 20px; display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; color: inherit; text-decoration: none; font-size: 13px; font-weight: 800; border: 1px solid transparent; transition: transform .2s, background .2s, border-color .2s; }
+.button b { min-width: 34px; height: 34px; display: grid; place-items: center; font: 800 11px/1 var(--font-body); }
+.button:hover { transform: translateY(-2px); }
+.button-primary { background: var(--red); }
+.button-primary b { color: var(--red); background: white; }
+.button-ghost { border-color: rgba(255,255,255,.38); background: rgba(255,255,255,.04); }
+.button-ghost b { color: white; background: rgba(255,255,255,.14); }
+.hero-note { max-width: 630px; margin: 18px 0 0; color: rgba(255,255,255,.55); font-size: 11px; line-height: 1.7; }
+.hero-side { position: relative; z-index: 2; align-self: stretch; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid rgba(255,255,255,.16); }
+.hero-stat { padding: 24px 0 24px 27px; border-bottom: 1px solid rgba(255,255,255,.16); }
+.hero-stat:first-child { border-top: 1px solid rgba(255,255,255,.16); }
+.hero-stat b { display: block; font: italic 800 30px/1 var(--font-display); color: var(--red); }
+.hero-stat span { display: block; margin-top: 8px; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.scroll-hint { position: absolute; right: 25px; bottom: 25px; z-index: 3; display: flex; align-items: center; gap: 10px; transform: rotate(90deg); transform-origin: right bottom; color: rgba(255,255,255,.45); font: 700 9px/1 var(--font-body); letter-spacing: .18em; }
+.scroll-hint i { width: 42px; height: 1px; background: rgba(255,255,255,.4); position: relative; overflow: hidden; }
+.scroll-hint i::after { content: ""; position: absolute; inset: 0; background: white; transform: translateX(-100%); animation: scrollLine 2.2s infinite; }
+@keyframes scrollLine { 55%,100% { transform: translateX(100%); } }
 
-    <section class="intro-strip" aria-label="初心者向けメッセージ">
-      <p><strong>歌えなくても大丈夫。</strong> 手拍子だけ、声だけ、サビだけ。できるところから参加すればOK。</p>
-      <span>ENJOY THE STADIUM.</span>
-    </section>
+.intro-strip { min-height: 76px; padding: 15px clamp(24px,8vw,130px); display: flex; align-items: center; justify-content: space-between; gap: 24px; color: white; background: var(--red); }
+.intro-strip p { margin: 0; font-size: 14px; line-height: 1.7; }
+.intro-strip p strong { font-weight: 900; }
+.intro-strip > span { flex: 0 0 auto; font: italic 800 22px/1 var(--font-display); letter-spacing: .06em; opacity: .75; }
 
-    <section class="section starter" id="starter">
-      <div class="section-heading">
-        <div>
-          <p class="section-number">01 / START HERE</p>
-          <h2>まず覚える、<em>5曲。</em></h2>
-        </div>
-        <p>初めてゴール裏へ行く人向けに、短さ・登場頻度・入りやすさを基準に選びました。全部覚えなくても、1曲知っているだけで観戦の景色が変わります。</p>
-      </div>
-      <div class="starter-road" id="starter-road" aria-live="polite"></div>
-    </section>
+.section { padding: 110px clamp(24px,8vw,130px); }
+.section-heading { display: grid; grid-template-columns: minmax(360px,.9fr) minmax(320px,1fr); gap: clamp(40px,8vw,130px); align-items: end; margin-bottom: 56px; }
+.section-number { margin: 0 0 12px; font: 800 11px/1 var(--font-body); letter-spacing: .17em; color: var(--blue); }
+.section-number.light { color: #77bdff; }
+.section-heading h2, .away-lead h2, .current-panel h2 { margin: 0; font: 900 clamp(50px,6vw,84px)/.93 var(--font-display); letter-spacing: -.035em; }
+.section-heading h2 em, .away-lead h2 em, .current-panel h2 em { color: var(--red); font-style: italic; }
+.section-heading > p { margin: 0; color: var(--muted); font-size: 14px; line-height: 2; }
+.starter { background: var(--paper); }
+.starter-road { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 1px; background: #cfd6e0; border: 1px solid #cfd6e0; }
+.starter-card { min-height: 350px; padding: 23px; display: flex; flex-direction: column; background: white; transition: background .25s, color .25s, transform .25s; cursor: pointer; border: 0; text-align: left; position: relative; overflow: hidden; }
+.starter-card::after { content: ""; position: absolute; right: -38px; bottom: -38px; width: 100px; height: 100px; border: 20px solid var(--red); border-radius: 50%; opacity: 0; transform: scale(.5); transition: .25s; }
+.starter-card:hover { color: white; background: var(--navy-2); transform: translateY(-6px); z-index: 2; }
+.starter-card:hover::after { opacity: .18; transform: scale(1); }
+.starter-card > span { font: italic 900 42px/1 var(--font-display); color: var(--red); }
+.starter-card .starter-label { margin: auto 0 10px; color: var(--blue); font: 800 10px/1 var(--font-body); letter-spacing: .12em; }
+.starter-card:hover .starter-label { color: #69b5ff; }
+.starter-card h3 { margin: 0; font-size: 20px; line-height: 1.45; }
+.starter-card p { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.starter-card:hover p { color: rgba(255,255,255,.7); }
+.starter-card b { margin-top: 25px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); font-size: 16px; }
+.starter-card:hover b { border-color: rgba(255,255,255,.3); }
 
-    <section class="section quick-guide" aria-labelledby="quick-title">
-      <div class="quick-card dark">
-        <p class="mini-label">WHEN TO SING?</p>
-        <h2 id="quick-title">現地では、<br>周りを見ればわかる。</h2>
-        <div class="pulse-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
-      <div class="quick-card guide-list">
-        <article><span>01</span><div><h3>コールリーダーを見る</h3><p>始まる合図やテンポは、ゴール裏中央の動きが目印。</p></div></article>
-        <article><span>02</span><div><h3>最初は手拍子から</h3><p>メロディが分からなくても、周囲の拍に合わせれば一体感を楽しめます。</p></div></article>
-        <article><span>03</span><div><h3>無理に跳ばなくてOK</h3><p>体調と周囲に配慮し、声だけ・拍手だけでも十分な応援です。</p></div></article>
-      </div>
-    </section>
+.quick-guide { display: grid; grid-template-columns: minmax(330px,.85fr) minmax(420px,1.15fr); gap: 0; padding-top: 0; }
+.quick-card { min-height: 430px; }
+.quick-card.dark { position: relative; overflow: hidden; padding: 54px; color: white; background: var(--navy); }
+.mini-label { margin: 0 0 30px; color: #6aaeff; font-size: 10px; font-weight: 800; letter-spacing: .18em; }
+.quick-card h2 { margin: 0; font: 900 clamp(43px,5vw,70px)/1.05 var(--font-display); }
+.pulse-lines { position: absolute; left: 0; right: 0; bottom: 30px; height: 110px; display: flex; align-items: center; gap: 8px; padding: 0 45px; opacity: .75; }
+.pulse-lines i { flex: 1; height: 30%; background: linear-gradient(to top,var(--blue),#49a6ff); transform-origin: center; animation: pulse 2s ease-in-out infinite; }
+.pulse-lines i:nth-child(2) { height: 65%; animation-delay: -.8s; }
+.pulse-lines i:nth-child(3) { height: 38%; animation-delay: -.2s; background: var(--red); }
+.pulse-lines i:nth-child(4) { height: 88%; animation-delay: -1.2s; }
+.pulse-lines i:nth-child(5) { height: 55%; animation-delay: -.5s; background: var(--red); }
+.pulse-lines i:nth-child(6) { height: 75%; animation-delay: -1.5s; }
+.pulse-lines i:nth-child(7) { height: 28%; animation-delay: -.9s; }
+@keyframes pulse { 50% { transform: scaleY(.55); opacity: .55; } }
+.guide-list { border: 1px solid var(--line); border-left: 0; display: flex; flex-direction: column; justify-content: center; padding: 24px 54px; }
+.guide-list article { display: grid; grid-template-columns: 50px 1fr; gap: 22px; padding: 27px 0; border-bottom: 1px solid var(--line); }
+.guide-list article:last-child { border-bottom: 0; }
+.guide-list article > span { font: italic 900 28px/1 var(--font-display); color: var(--red); }
+.guide-list h3 { margin: 0 0 8px; font-size: 16px; }
+.guide-list p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
 
-    <section class="section library" id="library">
-      <div class="section-heading library-heading">
-        <div>
-          <p class="section-number">02 / CHANT LIBRARY</p>
-          <h2>場面から、<em>探す。</em></h2>
-        </div>
-        <p>曲名が分からなくても大丈夫。「得点後」「試合前後」「カップ戦」など、使われる場面の目安から探せます。</p>
-      </div>
+.library { background: white; }
+.library-heading { margin-bottom: 40px; }
+.library-controls { position: sticky; top: calc(var(--header-h) + 10px); z-index: 30; padding: 15px; margin: 0 -15px 28px; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(220,226,235,.8); }
+.search-box { height: 58px; display: flex; align-items: center; gap: 14px; padding: 0 17px; border: 2px solid var(--ink); background: white; }
+.search-box > span:not(.sr-only) { width: 16px; height: 16px; border: 2px solid var(--ink); border-radius: 50%; position: relative; }
+.search-box > span:not(.sr-only)::after { content: ""; position: absolute; width: 7px; height: 2px; right: -5px; bottom: -3px; background: var(--ink); transform: rotate(45deg); }
+.search-box input { min-width: 0; flex: 1; height: 100%; border: 0; outline: 0; font-weight: 700; color: var(--ink); }
+.search-box input::placeholder { color: #9aa3b1; font-weight: 500; }
+.search-box kbd { padding: 3px 8px; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 3px; font-size: 11px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+.filter { padding: 9px 15px; border: 1px solid var(--line); background: white; color: #566176; font-size: 11px; font-weight: 700; cursor: pointer; transition: .2s; }
+.filter:hover { border-color: var(--blue); color: var(--blue); }
+.filter.active { color: white; border-color: var(--navy); background: var(--navy); }
+.result-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.result-bar p { margin: 0; font: 800 13px/1 var(--font-body); letter-spacing: .1em; }
+.result-bar p strong { color: var(--red); font: italic 900 26px/1 var(--font-display); }
+.result-bar label { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.result-bar select { border: 0; border-bottom: 1px solid var(--ink); padding: 5px 25px 5px 4px; background: white; color: var(--ink); font-size: 11px; font-weight: 800; }
+.chant-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+.chant-card { position: relative; min-height: 270px; padding: 24px; overflow: hidden; display: flex; flex-direction: column; text-align: left; color: var(--ink); background: var(--paper); border: 1px solid transparent; cursor: pointer; transition: transform .2s, border-color .2s, background .2s; }
+.chant-card:hover { transform: translateY(-4px); border-color: #b9c4d3; background: white; box-shadow: 0 16px 36px rgba(4,18,42,.09); }
+.chant-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 0; background: linear-gradient(var(--blue),var(--red)); transition: height .25s; }
+.chant-card:hover::before { height: 100%; }
+.chant-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; }
+.chant-index { font: italic 900 34px/1 var(--font-display); color: #c6ccd5; }
+.chant-level { display: inline-flex; align-items: center; gap: 4px; }
+.chant-level i { width: 4px; height: 13px; background: #cbd2dc; }
+.chant-level i.on { background: var(--red); }
+.chant-scene { margin: auto 0 9px; color: var(--blue); font-size: 10px; font-weight: 900; letter-spacing: .1em; }
+.chant-card h3 { margin: 0; font-size: 20px; line-height: 1.4; letter-spacing: -.025em; }
+.chant-card .aliases { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+.chant-bottom { display: flex; justify-content: space-between; align-items: end; gap: 15px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #dce1e8; }
+.chant-bottom p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+.chant-bottom b { flex: 0 0 auto; width: 32px; height: 32px; display: grid; place-items: center; color: white; background: var(--navy); }
+.empty-result { padding: 70px 20px; text-align: center; background: var(--paper); }
+.empty-result b { font: italic 900 42px/1 var(--font-display); color: #aeb8c7; }
+.empty-result p { color: var(--muted); }
 
-      <div class="library-controls">
-        <label class="search-box">
-          <span aria-hidden="true"></span>
-          <span class="sr-only">チャントを検索</span>
-          <input id="search-input" type="search" placeholder="曲名・原曲・キーワードで検索" autocomplete="off">
-          <kbd>/</kbd>
-        </label>
-        <div class="filter-row" id="filter-row" role="group" aria-label="カテゴリーで絞り込み">
-          <button class="filter active" type="button" data-filter="all">すべて</button>
-          <button class="filter" type="button" data-filter="beginner">初心者</button>
-          <button class="filter" type="button" data-filter="match">試合中</button>
-          <button class="filter" type="button" data-filter="goal">得点・勝利</button>
-          <button class="filter" type="button" data-filter="before-after">試合前後</button>
-          <button class="filter" type="button" data-filter="cup">カップ戦</button>
-          <button class="filter" type="button" data-filter="derby">ダービー</button>
-          <button class="filter" type="button" data-filter="classic">クラシック</button>
-        </div>
-      </div>
+.away-feature { position: relative; overflow: hidden; padding: 110px clamp(24px,8vw,130px); color: white; background: linear-gradient(135deg,#07172f,#092b61 62%,#0d3977); }
+.away-feature::before { content: "08"; position: absolute; right: -3vw; bottom: -11vw; font: italic 900 35vw/.7 var(--font-display); color: rgba(255,255,255,.035); }
+.away-feature::after { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(120deg,transparent 0,transparent 62px,rgba(255,255,255,.025) 63px,rgba(255,255,255,.025) 64px); }
+.away-inner { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(330px,.85fr) minmax(500px,1.15fr); gap: clamp(60px,8vw,130px); }
+.away-kicker { margin: 18px 0 16px; font: italic 900 18px/1.1 var(--font-display); letter-spacing: .12em; color: var(--red); }
+.away-lead > p:not(.section-number):not(.away-kicker) { max-width: 510px; margin: 28px 0 0; color: rgba(255,255,255,.7); font-size: 13px; line-height: 2; }
+.button-white { margin-top: 32px; color: var(--navy); background: white; }
+.button-white b { color: white; background: var(--red); }
+.away-timeline { margin: 0; padding: 0; list-style: none; counter-reset: away; border-top: 1px solid rgba(255,255,255,.2); }
+.away-timeline li { counter-increment: away; display: grid; grid-template-columns: 62px 1fr auto; gap: 20px; align-items: center; min-height: 88px; border-bottom: 1px solid rgba(255,255,255,.2); }
+.away-timeline li::before { content: "W" counter(away); font: italic 900 24px/1 var(--font-display); color: var(--red); }
+.away-timeline h3 { margin: 0 0 5px; font-size: 15px; }
+.away-timeline p { margin: 0; color: rgba(255,255,255,.55); font-size: 10px; }
+.away-timeline a { width: 34px; height: 34px; display: grid; place-items: center; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,.35); transition: .2s; }
+.away-timeline a:hover { background: var(--red); border-color: var(--red); }
 
-      <div class="result-bar">
-        <p><strong id="result-count">0</strong> CHANTS</p>
-        <label>並び順
-          <select id="sort-select">
-            <option value="recommended">おすすめ順</option>
-            <option value="easy">やさしい順</option>
-            <option value="name">曲名順</option>
-          </select>
-        </label>
-      </div>
-      <div class="chant-grid" id="chant-grid" aria-live="polite"></div>
-      <div class="empty-result" id="empty-result" hidden>
-        <b>NO CHANTS FOUND.</b>
-        <p>検索語やカテゴリーを変えてみてください。</p>
-      </div>
-    </section>
+.current-guide { background: var(--paper); }
+.current-panel { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(50px,9vw,150px); padding: 65px; color: white; background: linear-gradient(120deg,var(--navy),#0a2d66); }
+.current-panel > div > p:last-child { max-width: 500px; margin: 25px 0 0; color: rgba(255,255,255,.64); font-size: 13px; line-height: 2; }
+.current-links { display: flex; flex-direction: column; justify-content: center; }
+.current-links a { display: grid; grid-template-columns: 50px 1fr 24px; gap: 16px; align-items: center; min-height: 90px; color: white; text-decoration: none; border-top: 1px solid rgba(255,255,255,.22); }
+.current-links a:last-child { border-bottom: 1px solid rgba(255,255,255,.22); }
+.current-links a:hover i { transform: translate(3px,-3px); color: var(--red); }
+.link-icon { width: 42px; height: 42px; display: grid; place-items: center; background: white; color: var(--navy); font-size: 19px; }
+.link-icon.play { color: var(--red); font-size: 13px; }
+.current-links b { display: block; font: 800 18px/1 var(--font-body); }
+.current-links small { display: block; margin-top: 7px; color: rgba(255,255,255,.58); font-size: 10px; }
+.current-links i { font-style: normal; transition: .2s; }
 
-    <section class="away-feature" id="away2019">
-      <div class="away-inner">
-        <div class="away-lead">
-          <p class="section-number light">03 / ARCHIVE 2019</p>
-          <p class="away-kicker">8 AWAY GAMES.<br>8 NEW SONGS.</p>
-          <h2>アウェイ8連戦、<br><em>毎週、新チャント。</em></h2>
-          <p>2019年、8週連続で新曲を披露した企画。J-POPを大胆に取り込んだ、FC東京サポーター文化の遊び心が詰まったアーカイブです。</p>
-          <a class="button button-white" href="https://www.youtube.com/results?search_query=FC%E6%9D%B1%E4%BA%AC+2019+8%E9%80%B1%E9%80%A3%E7%B6%9A+%E6%96%B0%E6%9B%B2+%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88" target="_blank" rel="noreferrer"><span>まとめ動画を探す</span><b>↗</b></a>
-        </div>
-        <ol class="away-timeline" id="away-timeline"></ol>
-      </div>
-    </section>
+.sources { background: white; }
+.source-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.source-grid a { min-height: 130px; padding: 25px; display: grid; grid-template-columns: 46px 1fr 25px; gap: 18px; align-items: center; color: var(--ink); text-decoration: none; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); transition: .2s; }
+.source-grid a:hover { color: white; background: var(--navy); }
+.source-grid > a > b { font: italic 900 28px/1 var(--font-display); color: var(--red); }
+.source-grid strong { display: block; font-size: 15px; }
+.source-grid small { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; }
+.source-grid a:hover small { color: rgba(255,255,255,.6); }
+.source-grid i { font-style: normal; }
 
-    <section class="section current-guide">
-      <div class="current-panel">
-        <div>
-          <p class="section-number">04 / CURRENT CHANTS</p>
-          <h2>選手チャントは、<br><em>最新動画で。</em></h2>
-          <p>選手の加入・移籍や新曲発表に合わせて変わるため、固定一覧ではなく直近の現地投稿へ案内します。</p>
-        </div>
-        <div class="current-links">
-          <a href="https://x.com/hashtag/tokyo12?src=hashtag_click" target="_blank" rel="noreferrer"><span class="link-icon">𝕏</span><span><b>#TOKYO12</b><small>最新の発表・現地投稿を探す</small></span><i>↗</i></a>
-          <a href="https://www.youtube.com/results?search_query=FC%E6%9D%B1%E4%BA%AC+%E9%81%B8%E6%89%8B%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88+2026" target="_blank" rel="noreferrer"><span class="link-icon play">▶</span><span><b>YouTube</b><small>直近の選手チャント動画を探す</small></span><i>↗</i></a>
-        </div>
-      </div>
-    </section>
+.site-footer { position: relative; padding: 70px clamp(24px,8vw,130px); display: grid; grid-template-columns: 280px 1fr 70px; gap: 70px; align-items: start; color: white; background: #030b19; }
+.footer-brand b { font: italic 900 56px/.72 var(--font-display); letter-spacing: -.03em; }
+.footer-brand p { margin: 25px 0 0; color: var(--red); font: 800 10px/1.55 var(--font-body); letter-spacing: .16em; }
+.footer-copy p { max-width: 820px; margin: 0 0 8px; color: rgba(255,255,255,.46); font-size: 9px; line-height: 1.8; }
+.footer-copy small { display: block; margin-top: 28px; color: rgba(255,255,255,.7); font: 700 9px/1 var(--font-body); letter-spacing: .14em; }
+.back-top { width: 58px; height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,.35); }
+.back-top span { font-size: 8px; letter-spacing: .1em; }
 
-    <section class="section sources" id="sources">
-      <div class="section-heading">
-        <div>
-          <p class="section-number">05 / LISTEN & LEARN</p>
-          <h2>歌詞と音源を、<em>確認。</em></h2>
-        </div>
-        <p>本ページは全文を転載せず、信頼できる既存ページへ案内します。原曲をカラオケで練習するのもおすすめです。</p>
-      </div>
-      <div class="source-grid">
-        <a href="https://www.jchantnavi.com/%E3%80%90%E5%AE%8C%E5%85%A8%E7%B6%B2%E7%BE%85%E3%80%91fc%E6%9D%B1%E4%BA%AC-%E3%83%81%E3%83%A3%E3%83%B3%E3%83%88-%E6%AD%8C%E8%A9%9E-%E5%8E%9F%E6%9B%B2/" target="_blank" rel="noreferrer"><b>01</b><span><strong>Jリーグチャントナビ</strong><small>歌詞・原曲・現地動画をまとめて確認</small></span><i>↗</i></a>
-        <a href="https://soccer-chant.com/fctokyo.html" target="_blank" rel="noreferrer"><b>02</b><span><strong>サッカーチャント集</strong><small>チャント音源と歌詞を確認</small></span><i>↗</i></a>
-        <a href="https://www.joysound.com/web/s/karaoke/feature/fctokyo" target="_blank" rel="noreferrer"><b>03</b><span><strong>JOYSOUND</strong><small>チャント原曲をカラオケで練習</small></span><i>↗</i></a>
-        <a href="https://x.com/hashtag/tokyo12?src=hashtag_click" target="_blank" rel="noreferrer"><b>04</b><span><strong>#TOKYO12</strong><small>新曲・選手チャントの最新情報</small></span><i>↗</i></a>
-      </div>
-    </section>
-  </main>
+.chant-modal { width: min(640px,calc(100% - 30px)); max-height: calc(100vh - 30px); padding: 45px; color: var(--ink); border: 0; border-radius: 0; box-shadow: 0 28px 100px rgba(0,0,0,.32); }
+.chant-modal::backdrop { background: rgba(3,11,25,.82); backdrop-filter: blur(5px); }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border: 1px solid var(--line); background: white; cursor: pointer; font-size: 22px; }
+.modal-number { font: italic 900 55px/1 var(--font-display); color: #e5e9ef; }
+.modal-scene { margin: 20px 0 6px; color: var(--blue); font-size: 10px; font-weight: 900; letter-spacing: .12em; }
+.chant-modal h2 { margin: 0; font: 900 clamp(38px,7vw,60px)/1 var(--font-display); letter-spacing: -.03em; }
+.modal-alias { min-height: 17px; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+.modal-meta { display: grid; grid-template-columns: 150px 1fr; gap: 28px; margin: 30px 0; padding: 22px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.modal-meta small { display: block; margin-bottom: 9px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.modal-meta strong { display: block; font-size: 12px; line-height: 1.7; }
+.modal-text h3 { margin: 0 0 8px; font-size: 11px; }
+.modal-text p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.9; }
+.modal-tip { margin-top: 24px; padding: 18px; border-left: 4px solid var(--red); background: var(--paper); }
+.modal-tip span { color: var(--red); font: italic 900 13px/1 var(--font-display); letter-spacing: .08em; }
+.modal-tip p { margin: 8px 0 0; font-size: 11px; line-height: 1.8; }
+.rights-note { color: #929baa; font-size: 9px; }
+.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+.modal-actions a { min-height: 48px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; gap: 15px; color: white; text-decoration: none; background: var(--navy); font-size: 10px; font-weight: 800; }
+.modal-actions a:first-child { grid-column: 1 / -1; background: var(--red); }
+.modal-actions a:hover { filter: brightness(1.18); }
 
-  <footer class="site-footer">
-    <div class="footer-brand"><b>TOKYO<br>CHANTS</b><p>VOICE TOGETHER.<br>BLUE & RED FOREVER.</p></div>
-    <div class="footer-copy">
-      <p>本ページは個人が運営する非公式ファンコンテンツです。FC東京および関係団体とは無関係です。</p>
-      <p>歌詞・音源・楽曲等の権利は各権利者に帰属します。掲載内容は曲名・原曲・観戦時の目安を独自に整理したもので、歌詞や音源の全文転載は行っていません。</p>
-      <p>チャントの使用場面や歌い方は試合・時期・現地のリードにより変わることがあります。現地では周囲の案内に従ってください。</p>
-      <small>DATA UPDATED <span id="updated-label">—</span> / © fctokyo.xyz</small>
-    </div>
-    <a class="back-top" href="#top">↑<span>TOP</span></a>
-  </footer>
-
-  <dialog class="chant-modal" id="chant-modal" aria-labelledby="modal-title">
-    <button class="modal-close" type="button" aria-label="閉じる">×</button>
-    <div class="modal-number" id="modal-number">01</div>
-    <p class="modal-scene" id="modal-scene"></p>
-    <h2 id="modal-title"></h2>
-    <p class="modal-alias" id="modal-alias"></p>
-    <div class="modal-meta">
-      <div><small>覚えやすさ</small><span id="modal-level"></span></div>
-      <div><small>原曲・モチーフ</small><strong id="modal-original"></strong></div>
-    </div>
-    <div class="modal-text"><h3>どんなチャント？</h3><p id="modal-summary"></p></div>
-    <div class="modal-tip"><span>BEGINNER TIP</span><p id="modal-tip"></p></div>
-    <p class="rights-note">歌詞・音源は掲載せず、外部の提供元へ案内します。</p>
-    <div class="modal-actions">
-      <a id="modal-chant-link" href="#" target="_blank" rel="noreferrer">歌詞・音源を見る <span>↗</span></a>
-      <a id="modal-video-link" href="#" target="_blank" rel="noreferrer">現地動画を探す <span>↗</span></a>
-      <a id="modal-original-link" href="#" target="_blank" rel="noreferrer">原曲を聴く <span>↗</span></a>
-    </div>
-  </dialog>
-</body>
-</html>
+@media (max-width: 1040px) {
+  .hero { grid-template-columns: 1fr 170px; padding-left: 7vw; padding-right: 7vw; }
+  .hero h1 { font-size: clamp(100px,18vw,175px); }
+  .section, .away-feature { padding-left: 7vw; padding-right: 7vw; }
+  .starter-road { grid-template-columns: repeat(3,1fr); }
+  .starter-card:nth-child(n+4) { min-height: 290px; }
+  .chant-grid { grid-template-columns: 1fr 1fr; }
+  .site-footer { padding-left: 7vw; padding-right: 7vw; grid-template-columns: 220px 1fr 60px; gap: 40px; }
+}
+@media (max-width: 760px) {
+  :root { --header-h: 62px; }
+  .site-header { padding: 0 18px; }
+  .brand-mark { width: 29px; height: 25px; }
+  .brand-mark i { width: 5px; }
+  .brand-mark i:nth-child(2) { height: 19px; }
+  .brand-mark i:nth-child(3) { height: 25px; }
+  .brand b { font-size: 18px; }
+  .brand small { display: none; }
+  .menu-button { display: block; }
+  .header-nav { position: fixed; top: var(--header-h); left: 0; right: 0; height: auto; padding: 18px; display: none; flex-direction: column; align-items: stretch; gap: 0; background: var(--navy); border-top: 1px solid rgba(255,255,255,.15); }
+  .header-nav.open { display: flex; }
+  .header-nav a { padding: 14px 5px; border-bottom: 1px solid rgba(255,255,255,.12); }
+  .header-nav .top-link { margin-top: 12px; justify-content: space-between; }
+  .hero { min-height: 690px; height: calc(100svh - var(--header-h)); grid-template-columns: 1fr; padding: 42px 22px 65px; align-items: center; }
+  .hero h1 { font-size: clamp(90px,30vw,135px); line-height: .73; }
+  .hero-copy { margin-top: 35px; font-size: 18px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .button { width: 100%; }
+  .hero-side, .scroll-hint { display: none; }
+  .hero-note { font-size: 9px; }
+  .intro-strip { padding: 15px 20px; }
+  .intro-strip > span { display: none; }
+  .intro-strip p { font-size: 11px; }
+  .section, .away-feature { padding: 75px 20px; }
+  .section-heading { grid-template-columns: 1fr; gap: 22px; margin-bottom: 38px; }
+  .section-heading h2, .away-lead h2, .current-panel h2 { font-size: 52px; }
+  .section-heading > p { font-size: 12px; line-height: 1.9; }
+  .starter-road { grid-template-columns: 1fr; }
+  .starter-card, .starter-card:nth-child(n+4) { min-height: 218px; }
+  .quick-guide { grid-template-columns: 1fr; padding-top: 0; }
+  .quick-card { min-height: 350px; }
+  .quick-card.dark { padding: 38px 28px; }
+  .guide-list { border-left: 1px solid var(--line); padding: 15px 26px; }
+  .guide-list article { grid-template-columns: 40px 1fr; gap: 14px; }
+  .library-controls { top: calc(var(--header-h) + 4px); }
+  .search-box { height: 52px; }
+  .search-box kbd { display: none; }
+  .filter-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter { flex: 0 0 auto; }
+  .result-bar label { font-size: 0; }
+  .chant-grid { grid-template-columns: 1fr; }
+  .chant-card { min-height: 235px; }
+  .away-inner { grid-template-columns: 1fr; gap: 50px; }
+  .away-timeline li { grid-template-columns: 48px 1fr auto; gap: 12px; min-height: 82px; }
+  .current-panel { grid-template-columns: 1fr; padding: 42px 25px; gap: 42px; }
+  .source-grid { grid-template-columns: 1fr; }
+  .site-footer { grid-template-columns: 1fr 52px; gap: 38px 20px; padding: 55px 20px; }
+  .footer-brand { grid-column: 1; }
+  .footer-copy { grid-column: 1 / -1; grid-row: 2; }
+  .back-top { grid-column: 2; grid-row: 1; }
+  .chant-modal { padding: 42px 22px 25px; }
+  .modal-meta { grid-template-columns: 1fr; gap: 18px; }
+  .modal-actions { grid-template-columns: 1fr; }
+  .modal-actions a:first-child { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
