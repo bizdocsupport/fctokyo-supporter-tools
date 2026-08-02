@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071a3b">
+  <meta name="robots" content="noindex,nofollow">
+  <title>歌詞編集｜TOKYO CHANTS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./editor.css?v=20260802-1">
+  <script defer src="./chants-data.js?v=20260802-6"></script>
+  <script defer src="./lyrics-data.js?v=20260802-6"></script>
+  <script defer src="./editor.js?v=20260802-1"></script>
+</head>
+<body>
+  <header class="editor-header">
+    <div>
+      <p>LOCAL EDITOR / NOT PUBLISHED AUTOMATICALLY</p>
+      <h1>TOKYO CHANTS<br><span>歌詞編集</span></h1>
+    </div>
+    <a href="./index.html" target="_blank" rel="noreferrer">公開ページを見る ↗</a>
+  </header>
+
+  <main>
+    <section class="notice">
+      <strong>この画面の編集内容は、このブラウザだけに下書き保存されます。</strong>
+      <p>公開サイトへ反映するには、最後に「lyrics-data.jsを書き出す」を押し、GitHubの <code>docs/chants/lyrics-data.js</code> を上書きしてください。</p>
+    </section>
+
+    <section class="toolbar" aria-label="編集操作">
+      <label class="search-box">
+        <span>検索</span>
+        <input id="editor-search" type="search" placeholder="曲名・場面で絞り込み">
+      </label>
+      <div class="toolbar-actions">
+        <button id="preview-button" class="secondary" type="button">下書きをプレビュー</button>
+        <button id="export-button" class="primary" type="button">lyrics-data.jsを書き出す</button>
+        <button id="reset-button" class="danger" type="button">下書きを破棄</button>
+      </div>
+    </section>
+
+    <section class="summary-bar">
+      <p><strong id="filled-count">0</strong> / <span id="total-count">0</span> 曲入力済み</p>
+      <p id="save-state" role="status">準備中…</p>
+    </section>
+
+    <section id="editor-list" class="editor-list" aria-live="polite"></section>
+  </main>
+
+  <template id="editor-card-template">
+    <article class="editor-card">
+      <div class="card-head">
+        <div class="card-number"></div>
+        <div>
+          <p class="card-scene"></p>
+          <h2 class="card-title"></h2>
+        </div>
+        <span class="card-status"></span>
+      </div>
+      <label>
+        <span class="field-label">歌詞</span>
+        <textarea class="lyrics-input" rows="7" spellcheck="false" placeholder="ここに歌詞を入力。改行・掛け声・繰り返し表記もそのまま反映されます。"></textarea>
+      </label>
+      <div class="card-foot">
+        <span class="line-count">0行</span>
+        <button class="clear-one" type="button">この曲だけ消去</button>
+      </div>
+    </article>
+  </template>
+</body>
+</html>

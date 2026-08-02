@@ -2,7 +2,17 @@
   'use strict';
 
   const data = window.CHANTS_DATA;
-  const lyricsData = window.CHANT_LYRICS || {};
+  const baseLyrics = window.CHANT_LYRICS || {};
+  const previewMode = new URLSearchParams(location.search).get('preview') === '1';
+  let draftLyrics = {};
+  if (previewMode) {
+    try {
+      draftLyrics = JSON.parse(localStorage.getItem('tokyoChantsLyricsDraft') || '{}');
+    } catch (error) {
+      console.warn('歌詞下書きの読み込みに失敗しました。', error);
+    }
+  }
+  const lyricsData = { ...baseLyrics, ...draftLyrics };
   if (!data) return;
 
   const $ = (selector, root = document) => root.querySelector(selector);
