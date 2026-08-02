@@ -97,6 +97,38 @@
       font-size:12px;
       line-height:1.7
     }
+    .official-site-card{
+      grid-column:1/-1;
+      min-height:210px;
+      color:#fff;
+      border-color:#071a52;
+      background:
+        linear-gradient(110deg,rgba(7,88,217,.97) 0 50%,rgba(229,31,43,.96) 50%),
+        #071a52;
+    }
+    .official-site-card:hover{
+      border-color:#071a52;
+      box-shadow:0 18px 44px rgba(7,26,82,.2)
+    }
+    .official-site-card .support-link-icon{
+      width:72px;
+      height:72px;
+      border:1px solid rgba(255,255,255,.5);
+      background:rgba(7,26,82,.28);
+      color:#fff;
+      font-size:12px;
+      letter-spacing:.08em
+    }
+    .official-site-card .support-link-copy small,
+    .official-site-card .support-link-copy p{
+      color:rgba(255,255,255,.74)
+    }
+    .official-site-card .support-link-copy h3{
+      font-size:clamp(25px,3vw,38px)
+    }
+    .official-site-card .support-link-arrow{
+      color:#fff
+    }
     @media(max-width:800px){
       .my-post-grid{grid-template-columns:1fr}
       .my-post-card{min-height:330px}
@@ -117,8 +149,17 @@
     </section>
 
     <section class="link-collection shell">
-      <div class="link-section-heading"><span>01</span><div><p class="kicker">X ACCOUNTS</p><h2>チェックしているXアカウント</h2></div></div>
+      <div class="link-section-heading"><span>01</span><div><p class="kicker">OFFICIAL / X ACCOUNTS</p><h2>FC東京公式・チェックしているX</h2></div></div>
       <div class="support-link-grid account-grid">
+        <a class="support-link-card official-site-card" href="https://www.fctokyo.co.jp/" target="_blank" rel="noreferrer">
+          <div class="support-link-icon website-icon">WEB</div>
+          <div class="support-link-copy">
+            <small>OFFICIAL WEBSITE</small>
+            <h3>FC東京公式サイト</h3>
+            <p>試合・チケット・ニュース・クラブ情報</p>
+          </div>
+          <span class="support-link-arrow">↗</span>
+        </a>
         <a class="support-link-card" href="https://x.com/fctokyoofficial" target="_blank" rel="noreferrer">
           <div class="support-link-icon x-icon">X</div><div class="support-link-copy"><small>OFFICIAL</small><h3>FC東京【公式】</h3><p>@fctokyoofficial</p></div><span class="support-link-arrow">↗</span>
         </a>
