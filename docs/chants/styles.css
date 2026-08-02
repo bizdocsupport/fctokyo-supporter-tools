@@ -302,3 +302,32 @@ img { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* v2: original lyrics-first chant detail */
+.chant-modal { overflow-y: auto; }
+.lyrics-panel { position: relative; margin: 30px 0; padding: 30px 28px 26px; overflow: hidden; color: white; background: #071a3b; border: 1px solid #071a3b; }
+.lyrics-panel::before { content: ""; position: absolute; inset: 0 0 auto; height: 7px; background: linear-gradient(90deg,var(--blue) 0 58%,var(--red) 58% 100%); }
+.lyrics-panel::after { content: "TOKYO"; position: absolute; right: -8px; bottom: -26px; color: rgba(255,255,255,.045); font: italic 900 92px/1 var(--font-display); letter-spacing: -.06em; pointer-events: none; }
+.lyrics-heading { position: relative; z-index: 1; display: flex; align-items: baseline; gap: 12px; margin-bottom: 21px; }
+.lyrics-heading span { color: var(--red); font: italic 900 13px/1 var(--font-display); letter-spacing: .13em; }
+.lyrics-heading h3 { margin: 0; color: white; font-size: 13px; }
+.lyrics-body { position: relative; z-index: 1; margin: 0; white-space: pre-wrap; color: white; font-size: 16px; font-weight: 700; line-height: 2.05; letter-spacing: .03em; }
+.lyrics-empty { position: relative; z-index: 1; padding: 18px 0 2px; border-top: 1px solid rgba(255,255,255,.22); }
+.lyrics-empty b { color: white; font-size: 13px; }
+.lyrics-empty p { margin: 8px 0 0; color: rgba(255,255,255,.58); font-size: 10px; line-height: 1.75; }
+.modal-actions.single { grid-template-columns: 1fr; }
+.modal-actions.single a { grid-column: auto; background: var(--red); }
+.matchday-note { background: white; }
+.matchday-panel { position: relative; min-height: 350px; padding: clamp(42px,7vw,78px); overflow: hidden; color: white; background: linear-gradient(125deg,#06142f 0 62%,#0b2e68 62% 100%); }
+.matchday-panel::before { content: ""; position: absolute; top: 0; right: 0; width: 38%; height: 100%; background: repeating-linear-gradient(90deg,transparent 0 34px,rgba(255,255,255,.045) 35px 37px); transform: skewX(-12deg) scale(1.25); transform-origin: top right; }
+.matchday-panel::after { content: "VOICE"; position: absolute; right: 3vw; bottom: -2.6vw; color: rgba(255,255,255,.055); font: italic 900 clamp(90px,15vw,210px)/.8 var(--font-display); letter-spacing: -.07em; }
+.matchday-panel > * { position: relative; z-index: 1; }
+.matchday-panel h2 { margin: 25px 0 20px; font: 900 clamp(52px,7vw,92px)/.87 var(--font-display); letter-spacing: -.04em; }
+.matchday-panel h2 em { color: var(--red); font-style: italic; }
+.matchday-panel > p:last-child { max-width: 650px; margin: 0; color: rgba(255,255,255,.67); font-size: 13px; line-height: 2; }
+@media (max-width:760px) {
+  .lyrics-panel { padding: 28px 20px 23px; }
+  .lyrics-body { font-size: 14px; line-height: 1.95; }
+  .matchday-panel { min-height: 330px; padding: 42px 25px; }
+  .matchday-panel::after { font-size: 100px; bottom: -12px; }
+}

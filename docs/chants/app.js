@@ -2,6 +2,7 @@
   'use strict';
 
   const data = window.CHANTS_DATA;
+  const lyricsData = window.CHANT_LYRICS || {};
   if (!data) return;
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -13,6 +14,10 @@
   const state = { filter: 'all', search: '', sort: 'recommended' };
   const modal = $('#chant-modal');
   let lastFocus = null;
+
+  function stableNumber(item) {
+    return String(data.chants.indexOf(item) + 1).padStart(2, '0');
+  }
 
   function levelHtml(level) {
     return `<span class="chant-level" aria-label="覚えやすさ ${level}/3">${[1,2,3].map(n => `<i class="${n <= level ? 'on' : ''}"></i>`).join('')}</span>`;
@@ -35,7 +40,17 @@
     const inFilter = state.filter === 'all' || item.tags.includes(state.filter);
     if (!inFilter) return false;
     if (!state.search) return true;
-    const haystack = normalize([item.title, ...(item.aliases || []), item.original, item.scene, item.summary, item.tip, ...item.tags].join(' '));
+    const lyrics = lyricsData[item.id] || '';
+    const haystack = normalize([
+      item.title,
+      ...(item.aliases || []),
+      item.scene,
+      item.status,
+      item.summary,
+      item.tip,
+      lyrics,
+      ...item.tags
+    ].join(' '));
     return haystack.includes(normalize(state.search));
   }
 
@@ -50,43 +65,60 @@
     const list = ordered(data.chants.filter(matches));
     $('#result-count').textContent = list.length;
     $('#empty-result').hidden = list.length > 0;
-    $('#chant-grid').innerHTML = list.map((item, index) => `
-      <button class="chant-card" type="button" data-id="${esc(item.id)}">
-        <div class="chant-top">
-          <span class="chant-index">${String(index + 1).padStart(2, '0')}</span>
-          ${levelHtml(item.difficulty)}
-        </div>
-        <p class="chant-scene">${esc(item.scene).toUpperCase()}</p>
-        <h3>${esc(item.title)}</h3>
-        ${item.aliases?.length ? `<p class="aliases">別名：${item.aliases.map(esc).join(' / ')}</p>` : '<p class="aliases">&nbsp;</p>'}
-        <div class="chant-bottom"><p>原曲：${esc(item.original)}</p><b aria-hidden="true">＋</b></div>
-      </button>`).join('');
+    $('#chant-grid').innerHTML = list.map(item => {
+      const hasLyrics = Boolean(String(lyricsData[item.id] || '').trim());
+      const status = item.status || (hasLyrics ? '歌詞あり' : '詳細を見る');
+      return `
+        <button class="chant-card" type="button" data-id="${esc(item.id)}">
+          <div class="chant-top">
+            <span class="chant-index">${stableNumber(item)}</span>
+            ${levelHtml(item.difficulty)}
+          </div>
+          <p class="chant-scene">${esc(item.scene).toUpperCase()}</p>
+          <h3>${esc(item.title)}</h3>
+          ${item.aliases?.length ? `<p class="aliases">別名：${item.aliases.map(esc).join(' / ')}</p>` : '<p class="aliases">&nbsp;</p>'}
+          <div class="chant-bottom"><p>${esc(status)}</p><b aria-hidden="true">＋</b></div>
+        </button>`;
+    }).join('');
   }
 
   function buildAwayTimeline() {
     $('#away-timeline').innerHTML = data.away2019.map(item => `
       <li>
-        <div><h3>${esc(item.title)}</h3><p>${esc(item.original)}</p></div>
-        <a href="${youtubeSearch(item.query)}" target="_blank" rel="noreferrer" aria-label="${esc(item.title)}の動画を探す">↗</a>
+        <div><h3>${esc(item.title)}</h3><p>2019 AWAY CHANT / WEEK ${esc(item.week)}</p></div>
+        <a href="${youtubeSearch(item.query)}" target="_blank" rel="noreferrer" aria-label="${esc(item.title)}の現地動画を探す">↗</a>
       </li>`).join('');
+  }
+
+  function renderLyrics(id) {
+    const raw = String(lyricsData[id] || '').trim();
+    const target = $('#modal-lyrics');
+    const empty = $('#modal-lyrics-empty');
+    if (!raw) {
+      target.textContent = '';
+      target.hidden = true;
+      empty.hidden = false;
+      return;
+    }
+    target.textContent = raw;
+    target.hidden = false;
+    empty.hidden = true;
   }
 
   function openModal(id, trigger) {
     const item = data.chants.find(chant => chant.id === id);
     if (!item) return;
     lastFocus = trigger || document.activeElement;
-    const index = data.chants.indexOf(item) + 1;
-    $('#modal-number').textContent = String(index).padStart(2, '0');
+    $('#modal-number').textContent = stableNumber(item);
     $('#modal-scene').textContent = item.scene.toUpperCase();
     $('#modal-title').textContent = item.title;
     $('#modal-alias').textContent = item.aliases?.length ? `別名：${item.aliases.join(' / ')}` : '';
     $('#modal-level').innerHTML = levelHtml(item.difficulty);
-    $('#modal-original').textContent = item.original;
+    $('#modal-status').textContent = item.status || '—';
     $('#modal-summary').textContent = item.summary;
     $('#modal-tip').textContent = item.tip;
-    $('#modal-chant-link').href = data.sources.chantNavi;
+    renderLyrics(item.id);
     $('#modal-video-link').href = youtubeSearch(`FC東京 ${item.title} チャント`);
-    $('#modal-original-link').href = youtubeSearch(`${item.original} 原曲`);
     modal.showModal();
     $('.modal-close', modal).focus();
   }
