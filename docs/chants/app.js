@@ -3,16 +3,18 @@
 
   const data = window.CHANTS_DATA;
   const baseLyrics = window.CHANT_LYRICS || {};
+  const baseSettings = window.CHANT_SETTINGS || {};
   const previewMode = new URLSearchParams(location.search).get('preview') === '1';
   let draftLyrics = {};
+  let draftSettings = {};
   if (previewMode) {
-    try {
-      draftLyrics = JSON.parse(localStorage.getItem('tokyoChantsLyricsDraft') || '{}');
-    } catch (error) {
-      console.warn('歌詞下書きの読み込みに失敗しました。', error);
-    }
+    try { draftLyrics = JSON.parse(localStorage.getItem('tokyoChantsLyricsDraft') || '{}'); }
+    catch (error) { console.warn('歌詞下書きの読み込みに失敗しました。', error); }
+    try { draftSettings = JSON.parse(localStorage.getItem('tokyoChantsSettingsDraft') || '{}'); }
+    catch (error) { console.warn('設定下書きの読み込みに失敗しました。', error); }
   }
   const lyricsData = { ...baseLyrics, ...draftLyrics };
+  const settingsData = { ...baseSettings, ...draftSettings };
   if (!data) return;
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -25,41 +27,64 @@
   const modal = $('#chant-modal');
   let lastFocus = null;
 
-  function stableNumber(item) {
-    return String(data.chants.indexOf(item) + 1).padStart(2, '0');
+  function settingFor(item) { return settingsData[item.id] || {}; }
+  function sceneFor(item) {
+    const setting = settingFor(item);
+    return Object.prototype.hasOwnProperty.call(setting, 'scene') ? String(setting.scene || '') : String(item.scene || '');
   }
-
+  function tipFor(item) {
+    const setting = settingFor(item);
+    return Object.prototype.hasOwnProperty.call(setting, 'tip') ? String(setting.tip || '') : String(item.tip || '');
+  }
+  function isRequired(item) {
+    const setting = settingFor(item);
+    if (Object.prototype.hasOwnProperty.call(setting, 'beginnerRequired')) return Boolean(setting.beginnerRequired);
+    return (data.beginner || []).includes(item.id);
+  }
+  function requiredOrder(item) {
+    const setting = settingFor(item);
+    const n = Number(setting.beginnerOrder);
+    if (Number.isFinite(n) && n > 0) return n;
+    const defaultIndex = (data.beginner || []).indexOf(item.id);
+    return defaultIndex >= 0 ? defaultIndex + 1 : data.chants.indexOf(item) + 100;
+  }
+  function requiredChants() {
+    return data.chants.filter(isRequired).sort((a,b) => requiredOrder(a) - requiredOrder(b) || data.chants.indexOf(a) - data.chants.indexOf(b));
+  }
+  function stableNumber(item) {
+    return String(item.number || data.chants.indexOf(item) + 1).padStart(2, '0');
+  }
   function levelHtml(level) {
     return `<span class="chant-level" aria-label="覚えやすさ ${level}/3">${[1,2,3].map(n => `<i class="${n <= level ? 'on' : ''}"></i>`).join('')}</span>`;
   }
 
   function buildStarter() {
     const container = $('#starter-road');
-    const chants = data.beginner.map(id => data.chants.find(item => item.id === id)).filter(Boolean);
+    const chants = requiredChants();
+    const count = $('#starter-count');
+    if (count) count.textContent = String(chants.length);
+    if (!chants.length) {
+      container.innerHTML = '<div class="starter-empty"><b>おすすめ設定なし</b><p>編集画面で「初心者でも必須」を選ぶと、ここに表示されます。</p></div>';
+      return;
+    }
     container.innerHTML = chants.map((item, index) => `
       <button class="starter-card" type="button" data-id="${esc(item.id)}">
         <span>${String(index + 1).padStart(2, '0')}</span>
-        <p class="starter-label">${esc(item.scene).toUpperCase()}</p>
+        <p class="starter-label">${esc(sceneFor(item)).toUpperCase()}</p>
         <h3>${esc(item.title)}</h3>
-        <p>${esc(item.tip)}</p>
+        <p>${esc(tipFor(item))}</p>
         <b aria-hidden="true">＋</b>
       </button>`).join('');
   }
 
   function matches(item) {
-    const inFilter = state.filter === 'all' || item.tags.includes(state.filter);
+    const inFilter = state.filter === 'all' || (state.filter === 'beginner' ? isRequired(item) : item.tags.includes(state.filter));
     if (!inFilter) return false;
     if (!state.search) return true;
     const lyrics = lyricsData[item.id] || '';
     const haystack = normalize([
-      item.title,
-      ...(item.aliases || []),
-      item.scene,
-      item.status,
-      item.summary,
-      item.tip,
-      lyrics,
-      ...item.tags
+      item.title, ...(item.aliases || []), sceneFor(item), item.status,
+      item.summary, tipFor(item), lyrics, ...item.tags
     ].join(' '));
     return haystack.includes(normalize(state.search));
   }
@@ -68,7 +93,7 @@
     const copy = [...items];
     if (state.sort === 'easy') return copy.sort((a,b) => a.difficulty - b.difficulty || a.title.localeCompare(b.title, 'ja'));
     if (state.sort === 'name') return copy.sort((a,b) => a.title.localeCompare(b.title, 'ja'));
-    return copy.sort((a,b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || data.chants.indexOf(a) - data.chants.indexOf(b));
+    return copy.sort((a,b) => Number(isRequired(b)) - Number(isRequired(a)) || Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || data.chants.indexOf(a) - data.chants.indexOf(b));
   }
 
   function buildGrid() {
@@ -82,9 +107,9 @@
         <button class="chant-card" type="button" data-id="${esc(item.id)}">
           <div class="chant-top">
             <span class="chant-index">${stableNumber(item)}</span>
-            ${levelHtml(item.difficulty)}
+            <div class="chant-top-right">${isRequired(item) ? '<span class="required-badge">初心者必須</span>' : ''}${levelHtml(item.difficulty)}</div>
           </div>
-          <p class="chant-scene">${esc(item.scene).toUpperCase()}</p>
+          <p class="chant-scene">${esc(sceneFor(item)).toUpperCase()}</p>
           <h3>${esc(item.title)}</h3>
           ${item.aliases?.length ? `<p class="aliases">別名：${item.aliases.map(esc).join(' / ')}</p>` : '<p class="aliases">&nbsp;</p>'}
           <div class="chant-bottom"><p>${esc(status)}</p><b aria-hidden="true">＋</b></div>
@@ -120,13 +145,14 @@
     if (!item) return;
     lastFocus = trigger || document.activeElement;
     $('#modal-number').textContent = stableNumber(item);
-    $('#modal-scene').textContent = item.scene.toUpperCase();
+    $('#modal-scene').textContent = sceneFor(item).toUpperCase();
     $('#modal-title').textContent = item.title;
     $('#modal-alias').textContent = item.aliases?.length ? `別名：${item.aliases.join(' / ')}` : '';
     $('#modal-level').innerHTML = levelHtml(item.difficulty);
     $('#modal-status').textContent = item.status || '—';
     $('#modal-summary').textContent = item.summary;
-    $('#modal-tip').textContent = item.tip;
+    $('#modal-tip').textContent = tipFor(item);
+    $('#modal-required').hidden = !isRequired(item);
     renderLyrics(item.id);
     $('#modal-video-link').href = youtubeSearch(`FC東京 ${item.title} チャント`);
     modal.showModal();
@@ -146,22 +172,12 @@
       $$('.filter').forEach(item => item.classList.toggle('active', item === button));
       buildGrid();
     });
-
-    $('#search-input').addEventListener('input', event => {
-      state.search = event.target.value;
-      buildGrid();
-    });
-
-    $('#sort-select').addEventListener('change', event => {
-      state.sort = event.target.value;
-      buildGrid();
-    });
-
+    $('#search-input').addEventListener('input', event => { state.search = event.target.value; buildGrid(); });
+    $('#sort-select').addEventListener('change', event => { state.sort = event.target.value; buildGrid(); });
     document.addEventListener('click', event => {
       const card = event.target.closest('[data-id]');
       if (card) openModal(card.dataset.id, card);
     });
-
     $('.modal-close', modal).addEventListener('click', closeModal);
     modal.addEventListener('click', event => {
       if (event.target === modal) {
@@ -171,14 +187,11 @@
       }
     });
     modal.addEventListener('cancel', event => { event.preventDefault(); closeModal(); });
-
     document.addEventListener('keydown', event => {
       if (event.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName)) {
-        event.preventDefault();
-        $('#search-input').focus();
+        event.preventDefault(); $('#search-input').focus();
       }
     });
-
     const menuButton = $('.menu-button');
     const nav = $('.header-nav');
     menuButton.addEventListener('click', () => {

@@ -5,44 +5,47 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#071a3b">
   <meta name="robots" content="noindex,nofollow">
-  <title>歌詞編集｜TOKYO CHANTS</title>
+  <title>チャント編集｜TOKYO CHANTS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./editor.css?v=20260802-1">
-  <script defer src="./chants-data.js?v=20260802-6"></script>
-  <script defer src="./lyrics-data.js?v=20260802-6"></script>
-  <script defer src="./editor.js?v=20260802-1"></script>
+  <link rel="stylesheet" href="./editor.css?v=20260802-2">
+  <script defer src="./chants-data.js?v=20260802-7"></script>
+  <script defer src="./lyrics-data.js?v=20260802-7"></script>
+  <script defer src="./chant-settings.js?v=20260802-7"></script>
+  <script defer src="./editor.js?v=20260802-2"></script>
 </head>
 <body>
   <header class="editor-header">
     <div>
       <p>LOCAL EDITOR / NOT PUBLISHED AUTOMATICALLY</p>
-      <h1>TOKYO CHANTS<br><span>歌詞編集</span></h1>
+      <h1>TOKYO CHANTS<br><span>コンテンツ編集</span></h1>
     </div>
-    <a href="./index.html" target="_blank" rel="noreferrer">公開ページを見る ↗</a>
+    <div class="header-actions">
+      <a href="./print.html?preview=1" target="_blank" rel="noreferrer">A4印刷画面 ↗</a>
+      <a href="./index.html" target="_blank" rel="noreferrer">公開ページを見る ↗</a>
+    </div>
   </header>
 
   <main>
     <section class="notice">
-      <strong>この画面の編集内容は、このブラウザだけに下書き保存されます。</strong>
-      <p>公開サイトへ反映するには、最後に「lyrics-data.jsを書き出す」を押し、GitHubの <code>docs/chants/lyrics-data.js</code> を上書きしてください。</p>
+      <strong>青文字・BEGINNER TIP・初心者必須・歌詞を、この画面で調整できます。</strong>
+      <p>編集内容はこのブラウザだけに下書き保存されます。公開には、書き出した <code>chant-settings.js</code> と <code>lyrics-data.js</code> をGitHubの <code>docs/chants/</code> に上書きしてください。</p>
     </section>
 
     <section class="toolbar" aria-label="編集操作">
-      <label class="search-box">
-        <span>検索</span>
-        <input id="editor-search" type="search" placeholder="曲名・場面で絞り込み">
-      </label>
+      <label class="search-box"><span>検索</span><input id="editor-search" type="search" placeholder="曲名・場面で絞り込み"></label>
       <div class="toolbar-actions">
         <button id="preview-button" class="secondary" type="button">下書きをプレビュー</button>
-        <button id="export-button" class="primary" type="button">lyrics-data.jsを書き出す</button>
+        <button id="export-settings-button" class="primary" type="button">設定ファイルを書き出す</button>
+        <button id="export-lyrics-button" class="primary lyrics-export" type="button">歌詞ファイルを書き出す</button>
         <button id="reset-button" class="danger" type="button">下書きを破棄</button>
       </div>
     </section>
 
     <section class="summary-bar">
-      <p><strong id="filled-count">0</strong> / <span id="total-count">0</span> 曲入力済み</p>
+      <p>歌詞 <strong id="filled-count">0</strong> / <span id="total-count">0</span> 曲入力済み</p>
+      <p>初心者必須 <strong id="required-count">0</strong> 曲</p>
       <p id="save-state" role="status">準備中…</p>
     </section>
 
@@ -53,20 +56,17 @@
     <article class="editor-card">
       <div class="card-head">
         <div class="card-number"></div>
-        <div>
-          <p class="card-scene"></p>
-          <h2 class="card-title"></h2>
-        </div>
+        <div><p class="card-scene-preview"></p><h2 class="card-title"></h2></div>
         <span class="card-status"></span>
       </div>
-      <label>
-        <span class="field-label">歌詞</span>
-        <textarea class="lyrics-input" rows="7" spellcheck="false" placeholder="ここに歌詞を入力。改行・掛け声・繰り返し表記もそのまま反映されます。"></textarea>
-      </label>
-      <div class="card-foot">
-        <span class="line-count">0行</span>
-        <button class="clear-one" type="button">この曲だけ消去</button>
+      <div class="settings-grid">
+        <label class="scene-field"><span class="field-label">曲名の上の青文字（使う場面）</span><input class="scene-input" type="text" maxlength="80" placeholder="例：試合中・よく歌う"></label>
+        <label class="required-field"><input class="required-input" type="checkbox"><span><b>初心者でも必須</b><small>おすすめ一覧・A4印刷に掲載</small></span></label>
+        <label class="order-field"><span class="field-label">おすすめ順</span><input class="order-input" type="number" min="1" max="99" step="1"></label>
       </div>
+      <label><span class="field-label">BEGINNER TIP</span><textarea class="tip-input compact" rows="3" placeholder="初心者向けの覚え方・入り方"></textarea></label>
+      <label><span class="field-label">歌詞</span><textarea class="lyrics-input" rows="7" spellcheck="false" placeholder="ここに歌詞を入力。改行・掛け声・繰り返し表記もそのまま反映されます。"></textarea></label>
+      <div class="card-foot"><span class="line-count">0行</span><button class="reset-one" type="button">この曲を公開値へ戻す</button></div>
     </article>
   </template>
 </body>

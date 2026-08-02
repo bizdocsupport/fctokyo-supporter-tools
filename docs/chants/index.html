@@ -13,10 +13,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=20260802-6">
-  <script defer src="./chants-data.js?v=20260802-6"></script>
-  <script defer src="./lyrics-data.js?v=20260802-6"></script>
-  <script defer src="./app.js?v=20260802-6"></script>
+  <link rel="stylesheet" href="./styles.css?v=20260802-7">
+  <script defer src="./chants-data.js?v=20260802-7"></script>
+  <script defer src="./lyrics-data.js?v=20260802-7"></script>
+  <script defer src="./chant-settings.js?v=20260802-7"></script>
+  <script defer src="./app.js?v=20260802-7"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">本文へ移動</a>
@@ -46,7 +47,7 @@
         <h1><span>TOKYO</span><br>CHANTS</h1>
         <p class="hero-copy">声をひとつに。<br><strong>初観戦でも迷わない、青赤の歌ガイド。</strong></p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#starter"><span>まず覚える5曲</span><b>↓</b></a>
+          <a class="button button-primary" href="#starter"><span>初心者必須チャント</span><b>↓</b></a>
           <a class="button button-ghost" href="#library"><span>すべてのチャント</span><b>40+</b></a>
         </div>
         <p class="hero-note">歌う場面・覚え方・歌詞を、ひとつの画面で確認できます。</p>
@@ -68,9 +69,12 @@
       <div class="section-heading">
         <div>
           <p class="section-number">01 / START HERE</p>
-          <h2>まず覚える、<em>5曲。</em></h2>
+          <h2>まず覚える、<em><span id="starter-count">5</span>曲。</em></h2>
         </div>
-        <p>初めてゴール裏へ行く人向けに、短さ・登場頻度・入りやすさを基準に選びました。全部覚えなくても、1曲知っているだけで観戦の景色が変わります。</p>
+        <div class="starter-heading-side">
+          <p>運営者が「初心者でも必須」に設定したチャントです。全部覚えなくても、1曲知っているだけで観戦の景色が変わります。</p>
+          <a class="print-recommended" href="./print.html" target="_blank" rel="noreferrer"><span>おすすめだけA4印刷</span><b>↗</b></a>
+        </div>
       </div>
       <div class="starter-road" id="starter-road" aria-live="polite"></div>
     </section>
@@ -191,6 +195,7 @@
     <div class="modal-meta">
       <div><small>覚えやすさ</small><span id="modal-level"></span></div>
       <div><small>使われ方</small><strong id="modal-status"></strong></div>
+      <div class="modal-required" id="modal-required" hidden><small>初心者向け</small><strong>必須・おすすめ</strong></div>
     </div>
     <section class="lyrics-panel" aria-labelledby="lyrics-title">
       <div class="lyrics-heading"><span>LYRICS</span><h3 id="lyrics-title">歌詞</h3></div>

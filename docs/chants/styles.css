@@ -331,3 +331,22 @@ img { max-width: 100%; }
   .matchday-panel { min-height: 330px; padding: 42px 25px; }
   .matchday-panel::after { font-size: 100px; bottom: -12px; }
 }
+
+
+/* v4: editable recommended chants and A4 print link */
+.starter-heading-side { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.starter-heading-side > p { margin: 0; color: var(--muted); font-size: 13px; line-height: 2; }
+.print-recommended { min-width: 250px; min-height: 48px; padding: 0 10px 0 17px; display: inline-flex; align-items: center; justify-content: space-between; gap: 18px; color: white; text-decoration: none; background: var(--navy); font-size: 11px; font-weight: 800; }
+.print-recommended b { width: 30px; height: 30px; display: grid; place-items: center; color: white; background: var(--red); }
+.starter-empty { grid-column: 1 / -1; padding: 55px 30px; text-align: center; background: white; }
+.starter-empty b { font-size: 18px; }
+.starter-empty p { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.chant-top-right { display: flex; align-items: center; gap: 10px; }
+.required-badge { padding: 5px 8px; color: white; background: var(--red); font-size: 8px; font-weight: 900; letter-spacing: .08em; }
+.modal-required strong { color: var(--red); }
+@media (max-width:760px) {
+  .starter-heading-side { gap: 16px; }
+  .print-recommended { width: 100%; }
+  .chant-top-right { gap: 7px; }
+  .required-badge { padding: 4px 6px; }
+}
