@@ -8,10 +8,12 @@ const jpDate=(d,withTime=true)=>{if(!d)return '未発表';const parts=new Intl.D
 const formatSale=v=>parseDate(v)?jpDate(parseDate(v),true):'未発表';
 const matchDate=r=>{const d=parseDate(r.kickoff);if(d)return jpDate(d,true);return r.date_text||'未定'};
 const isUpcoming=r=>{const d=parseDate(r.kickoff||r.sort_date);if(!d)return true;const now=new Date();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());return d>=today};
-const hasConfirmedTime=v=>!!(v&&/(?:T|\s)\d{1,2}:\d{2}/.test(v)&&parseDate(v));
-const isMufgNationalHome=r=>r.side==='HOME'&&String(r.stadium||'').replace(/\s/g,'').toUpperCase().includes('MUFG国立');
+const normalizeText=(v='')=>String(v).normalize('NFKC').replace(/\s+/g,'').toUpperCase();
+const isHomeMatch=r=>normalizeText(r.side)==='HOME'||normalizeText(r.side)==='ホーム'||normalizeText(r.side)==='H';
+const hasConfirmedTime=v=>!!(v&&/\d{1,2}:\d{2}/.test(String(v))&&parseDate(v));
+const isMufgNationalHome=r=>{const stadium=normalizeText(r.stadium);return isHomeMatch(r)&&stadium.includes('MUFG')&&stadium.includes('国立')};
 function calendarSpec(r){
-  if(r.side==='AWAY'&&hasConfirmedTime(r.general_at)){
+  if(!isHomeMatch(r)&&hasConfirmedTime(r.general_at)){
     return{
       start:parseDate(r.general_at),
       titlePrefix:'【チケット一般発売】',
@@ -47,4 +49,6 @@ function renderMatches(){const rows=filteredMatches();$('#result-count').textCon
 function renderNews(){const box=$('#news-list');if(!state.newsOpen){box.hidden=true;return}box.hidden=false;const rows=[...(state.data?.news||[])].sort((a,b)=>(b.published_at||'').localeCompare(a.published_at||'')).slice(0,20);box.innerHTML=rows.length?rows.map(n=>`<div class="news-row"><time>${esc(n.published_at||'')}</time><a href="${esc(safeUrl(n.url)||'#')}" target="_blank" rel="noreferrer">${esc(n.title||'タイトルなし')}</a><span>↗</span></div>`).join(''):'<div class="empty-state">ニュースデータはありません。</div>'}
 function initControls(){document.querySelectorAll('#side-filter button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#side-filter button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');state.side=btn.dataset.value;renderMatches()}));$('#competition-filter').addEventListener('change',e=>{state.competition=e.target.value;renderMatches()});$('#hide-finished').addEventListener('change',e=>{state.hideFinished=e.target.checked;renderMatches()});$('#news-toggle').addEventListener('click',()=>{state.newsOpen=!state.newsOpen;$('#news-toggle').setAttribute('aria-expanded',String(state.newsOpen));$('#news-toggle').innerHTML=state.newsOpen?'取得済みニュースを閉じる <span>−</span>':'取得済みニュースを表示 <span>＋</span>';renderNews()})}
 async function boot(){initControls();try{const res=await fetch('../data/ticket-data.json',{cache:'no-store'});if(!res.ok)throw new Error(`HTTP ${res.status}`);state.data=await res.json();const team=state.data.team||{},meta=state.data.metadata||{};$('#subtitle').textContent=`${team.subtitle||'FC東京の試合日とチケット発売日を、ひとつの一覧で。'}｜${team.season_label||''}・非公式`;$('#last-updated').textContent=meta.last_updated?jpDate(parseDate(meta.last_updated),true):'更新待ち';$('#data-status').textContent=meta.status==='success'?'DATA READY':'CHECK DATA';if(team.ticket_news_url)$('#official-news-link').href=team.ticket_news_url;if(team.disclaimer)$('#disclaimer-text').textContent=team.disclaimer;renderMatches();renderNews()}catch(err){console.error(err);$('#data-status').textContent='LOAD ERROR';$('#last-updated').textContent='データを読み込めません';$('#empty-state').hidden=false;$('#empty-state').textContent='ticket-data.jsonを読み込めません。GitHub Actionsまたはbuild_static_site.pyを実行してください。'}}
+console.info('FC TOKYO ticket app v1.3.27 loaded');
+window.__FC_TOKYO_TICKET_APP_VERSION__='1.3.27';
 boot();
