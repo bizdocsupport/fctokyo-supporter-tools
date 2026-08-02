@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="FC東京の観戦写真と動画をまとめているInstagramへの入口ページです。">
+  <meta name="theme-color" content="#071a52">
+  <title>FC東京 観戦日記｜Instagram Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    .instagram-matchdays {
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 86% 16%, rgba(7,88,217,.12), transparent 30%),
+        radial-gradient(circle at 12% 78%, rgba(229,31,43,.08), transparent 28%),
+        #f5f6f8;
+    }
+    .instagram-matchdays .global-header {
+      background: rgba(255,255,255,.9);
+    }
+    .instagram-hero {
+      display: grid;
+      grid-template-columns: minmax(0,.86fr) minmax(460px,1.14fr);
+      gap: clamp(48px,7vw,104px);
+      align-items: center;
+      padding-top: clamp(72px,9vw,130px);
+      padding-bottom: clamp(70px,9vw,124px);
+    }
+    .instagram-copy {
+      position: relative;
+      z-index: 3;
+    }
+    .instagram-account {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      color: #0758d9;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+    .instagram-account::before {
+      content: "";
+      width: 30px;
+      height: 3px;
+      background: linear-gradient(90deg,#0758d9 0 50%,#e51f2b 50%);
+    }
+    .instagram-copy h1 {
+      margin: 0;
+      font-size: clamp(54px,7vw,100px);
+      line-height: .91;
+      letter-spacing: -.075em;
+    }
+    .instagram-copy h1 span {
+      color: #8792a4;
+    }
+    .instagram-lead {
+      max-width: 610px;
+      margin: 32px 0 0;
+      color: #657184;
+      font-size: 16px;
+      line-height: 1.95;
+    }
+    .instagram-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+    }
+    .instagram-primary,
+    .instagram-secondary {
+      min-height: 54px;
+      padding: 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #071a52;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      transition: .25s ease;
+    }
+    .instagram-primary {
+      background: #071a52;
+      color: #fff;
+    }
+    .instagram-primary:hover {
+      background: #0758d9;
+      border-color: #0758d9;
+      transform: translateY(-3px);
+    }
+    .instagram-secondary {
+      background: transparent;
+      color: #071a52;
+    }
+    .instagram-secondary:hover {
+      background: #fff;
+      transform: translateY(-3px);
+    }
+    .instagram-note {
+      margin: 18px 0 0;
+      color: #8a94a4;
+      font-size: 10px;
+      line-height: 1.7;
+    }
+    .instagram-visual {
+      position: relative;
+      min-height: 690px;
+    }
+    .instagram-back-shape {
+      position: absolute;
+      inset: 5% -4% 3% 8%;
+      background: linear-gradient(145deg,#0758d9 0 54%,#e51f2b 54%);
+      transform: rotate(3.5deg);
+      box-shadow: 0 44px 90px rgba(14,30,68,.18);
+    }
+    .instagram-frame {
+      position: absolute;
+      inset: 0 6% 3% 0;
+      overflow: hidden;
+      border: 1px solid rgba(7,26,82,.18);
+      background: #fff;
+      box-shadow: 0 35px 100px rgba(13,29,63,.23);
+      transform: rotate(-2deg);
+      transition: .45s cubic-bezier(.2,.75,.2,1);
+    }
+    .instagram-frame:hover {
+      transform: rotate(0deg) translateY(-6px);
+    }
+    .instagram-browserbar {
+      height: 42px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid #e4e7ec;
+      background: #fff;
+    }
+    .instagram-browserbar i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #cbd1da;
+    }
+    .instagram-browserbar i:first-child { background: #0758d9; }
+    .instagram-browserbar i:nth-child(2) { background: #e51f2b; }
+    .instagram-browserbar span {
+      margin-left: auto;
+      color: #778294;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    .instagram-frame img {
+      display: block;
+      width: 100%;
+      height: calc(100% - 42px);
+      object-fit: cover;
+    }
+    .visual-label {
+      position: absolute;
+      z-index: 5;
+      right: -1%;
+      bottom: 8%;
+      padding: 14px 18px;
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(7,26,82,.92);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      box-shadow: 0 16px 35px rgba(7,26,82,.25);
+    }
+    .record-section {
+      padding: 74px 0 96px;
+      border-top: 1px solid #dce1e8;
+      background: #fff;
+    }
+    .record-heading {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 30px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    .record-heading h2 {
+      margin: 0;
+      font-size: clamp(40px,5vw,68px);
+      line-height: .95;
+      letter-spacing: -.065em;
+    }
+    .record-heading p {
+      max-width: 450px;
+      margin: 0;
+      color: #687386;
+      line-height: 1.85;
+    }
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      border-top: 1px solid #dce1e8;
+      border-left: 1px solid #dce1e8;
+    }
+    .record-card {
+      min-height: 240px;
+      padding: 25px;
+      border-right: 1px solid #dce1e8;
+      border-bottom: 1px solid #dce1e8;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+    .record-card small {
+      color: #0758d9;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+    .record-card h3 {
+      margin: auto 0 10px;
+      font-size: 28px;
+      letter-spacing: -.045em;
+    }
+    .record-card p {
+      margin: 0;
+      color: #687386;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+    .instagram-final {
+      padding: 82px 0;
+      color: #fff;
+      background: #071a52;
+    }
+    .instagram-final-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 35px;
+      align-items: center;
+    }
+    .instagram-final p {
+      margin: 0 0 10px;
+      color: #aebbd0;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+    .instagram-final h2 {
+      margin: 0;
+      font-size: clamp(34px,4vw,58px);
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+    .instagram-final .instagram-primary {
+      border-color: #fff;
+      background: #fff;
+      color: #071a52;
+    }
+    .instagram-final .instagram-primary:hover {
+      border-color: #e51f2b;
+      background: #e51f2b;
+      color: #fff;
+    }
+    .instagram-matchdays-footer {
+      padding: 27px 0 40px;
+      display: flex;
+      justify-content: space-between;
+      color: #7c8798;
+      font-size: 11px;
+      background: #fff;
+    }
+    @media (max-width: 980px) {
+      .instagram-hero {
+        grid-template-columns: 1fr;
+      }
+      .instagram-visual {
+        min-height: min(780px,92vw);
+      }
+      .record-heading {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 700px) {
+      .instagram-hero {
+        padding-top: 58px;
+        gap: 45px;
+      }
+      .instagram-copy h1 {
+        font-size: 51px;
+      }
+      .instagram-actions {
+        flex-direction: column;
+      }
+      .instagram-primary,
+      .instagram-secondary {
+        width: 100%;
+      }
+      .instagram-visual {
+        min-height: 112vw;
+      }
+      .instagram-frame {
+        inset: 0 3% 3% 1%;
+      }
+      .instagram-back-shape {
+        inset: 5% -1% 1% 6%;
+      }
+      .visual-label {
+        right: 0;
+        bottom: 5%;
+      }
+      .record-grid {
+        grid-template-columns: 1fr;
+      }
+      .record-card {
+        min-height: 190px;
+      }
+      .instagram-final-inner {
+        grid-template-columns: 1fr;
+      }
+      .instagram-matchdays-footer {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body class="instagram-matchdays">
+  <header class="global-header">
+    <a class="site-brand" href="../">
+      <span class="brand-bars"><i></i><i></i></span>
+      <span>FC TOKYO<br>SUPPORTER TOOLS</span>
+    </a>
+    <nav class="header-nav">
+      <a href="../ticket/">TICKET</a>
+      <a href="../calendar/">CALENDAR</a>
+      <a href="../links/">LINKS</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="instagram-hero shell">
+      <div class="instagram-copy">
+        <div class="instagram-account">INSTAGRAM / @SIO_0402</div>
+        <h1>観戦の記憶は、<br><span>Instagramへ。</span></h1>
+        <p class="instagram-lead">
+          試合の日に見たもの、食べたもの、感じた空気。FC東京の観戦写真と動画は、
+          Instagramにまとめています。最新の観戦記は、プロフィールからご覧ください。
+        </p>
+        <div class="instagram-actions">
+          <a class="instagram-primary" href="https://www.instagram.com/sio_0402/" target="_blank" rel="noreferrer">
+            Instagramで観戦記を見る ↗
+          </a>
+          <a class="instagram-secondary" href="../">ツール一覧へ戻る</a>
+        </div>
+        <p class="instagram-note">
+          ※このページの一覧画像はイメージです。最新の投稿内容はInstagramでご確認ください。
+        </p>
+      </div>
+
+      <div class="instagram-visual" aria-label="Instagram投稿一覧のイメージ">
+        <div class="instagram-back-shape" aria-hidden="true"></div>
+        <a class="instagram-frame" href="https://www.instagram.com/sio_0402/" target="_blank" rel="noreferrer">
+          <div class="instagram-browserbar" aria-hidden="true">
+            <i></i><i></i><i></i><span>@SIO_0402 / MATCHDAYS</span>
+          </div>
+          <img src="assets/instagram-grid.webp" alt="FC東京の観戦写真を並べたInstagram投稿一覧">
+        </a>
+        <div class="visual-label">PHOTO / VIDEO / MATCHDAY</div>
+      </div>
+    </section>
+
+    <section class="record-section">
+      <div class="shell">
+        <div class="record-heading">
+          <h2>What I record.</h2>
+          <p>勝敗だけでは残らない、その日の景色を写真と動画で記録しています。</p>
+        </div>
+        <div class="record-grid">
+          <article class="record-card">
+            <small>01 / MATCH</small>
+            <h3>試合と選手</h3>
+            <p>ピッチ、ゴール、スコアボード、試合後の挨拶など、スタジアムで見た瞬間。</p>
+          </article>
+          <article class="record-card">
+            <small>02 / STADIUM</small>
+            <h3>スタジアムの空気</h3>
+            <p>ゴール裏、遠征先、演出、スタンドの風景。その日だけの雰囲気。</p>
+          </article>
+          <article class="record-card">
+            <small>03 / FOOD</small>
+            <h3>蝗活</h3>
+            <p>スタジアムグルメや遠征先で食べたものも、観戦の大切な記憶として。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="instagram-final">
+      <div class="instagram-final-inner shell">
+        <div>
+          <p>LATEST MATCHDAYS</p>
+          <h2>続きはInstagramで。</h2>
+        </div>
+        <a class="instagram-primary" href="https://www.instagram.com/sio_0402/" target="_blank" rel="noreferrer">
+          @sio_0402 を開く ↗
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="instagram-matchdays-footer shell">
+    <a href="../">← FC TOKYO SUPPORTER TOOLS</a>
+    <span>PERSONAL / UNOFFICIAL</span>
+  </footer>
+</body>
+</html>
