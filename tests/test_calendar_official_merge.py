@@ -1,14 +1,4 @@
-import sys
-import types
 import unittest
-
-# この単体テストはカレンダー変換・マージロジックだけを検証するため、
-# ネットワーク取得部分のscraper依存を最小スタブに置き換える。
-fake_scraper = types.ModuleType("scraper")
-fake_scraper.FC_SCHEDULE_URL = "https://www.fctokyo.co.jp/match/schedule/"
-fake_scraper.fetch_fc_schedule = lambda session: []
-fake_scraper.make_session = lambda: object()
-sys.modules.setdefault("scraper", fake_scraper)
 
 from tools.build_calendar_data import (
     merge_official_top_matches,
