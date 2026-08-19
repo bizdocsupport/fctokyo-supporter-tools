@@ -121,5 +121,26 @@ class ParserTests(unittest.TestCase):
         html = '<div>8/22 京都戦 一般販売 7/20 10:00</div>'
         self.assertIsNone(extract_away_general_sale(html, match))
 
+    def test_completed_match_does_not_mix_with_next_upcoming_match(self):
+        html = """
+        <html><body><h2>Ｊ１リーグ</h2><h3>2026.08</h3>
+        <div>第2節</div><div>8月15日(土) 19:00</div><div>AWAY</div>
+        <div>ノエスタ</div><div>ヴィッセル神戸</div><div>2</div><div>-</div><div>2</div><div>FC東京</div>
+        <div>第3節</div><div>8月21日(金) 19:30</div><div>HOME</div>
+        <div>MUFG国立</div><div>FC東京</div><div>VS</div><div>ジェフユナイテッド千葉</div>
+        </body></html>
+        """
+        matches = parse_fc_schedule(html)
+        self.assertEqual(len(matches), 2)
+        kobe = next(m for m in matches if m['sort_date'].startswith('2026-08-15'))
+        chiba = next(m for m in matches if m['sort_date'].startswith('2026-08-21'))
+        self.assertEqual(kobe['home'], 'ヴィッセル神戸')
+        self.assertEqual(kobe['away'], 'FC東京')
+        self.assertEqual(kobe['stadium'], 'ノエスタ')
+        self.assertEqual(chiba['home'], 'FC東京')
+        self.assertEqual(chiba['away'], 'ジェフユナイテッド千葉')
+        self.assertEqual(chiba['stadium'], 'MUFG国立')
+
+
 if __name__ == '__main__':
     unittest.main()
