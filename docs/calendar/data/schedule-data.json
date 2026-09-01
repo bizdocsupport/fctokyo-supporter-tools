@@ -340,11 +340,11 @@
       "candidate_end": "",
       "candidate_dates": "",
       "confirmed_date": "2026-10-07",
-      "kickoff": "",
+      "kickoff": "19:00",
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "湘南ベルマーレ",
-      "venue": "未定",
+      "venue": "レモンS",
       "official_url": "https://www.fctokyo.co.jp/match/schedule/",
       "ticket_url": "/ticket/",
       "note": "",
@@ -1322,9 +1322,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-09-01T01:11:20.321828+00:00",
+    "built_at": "2026-09-01T14:45:14.361485+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/09/01 10:11",
+    "source_updated_at": "2026/09/01 23:45",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 42
