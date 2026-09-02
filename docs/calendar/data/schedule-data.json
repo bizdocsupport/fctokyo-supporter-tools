@@ -305,6 +305,28 @@
       "ticket_url": "https://fctokyo.xyz/ticket/",
       "note": "対戦相手・キックオフ時刻・会場未定",
       "enabled": "1",
+      "source": "",
+      "display_start": "2026-09-29"
+    },
+    {
+      "match_id": "TOP-AUTO-E143A7E74789",
+      "team": "TOP",
+      "competition": "JリーグYBCルヴァンカップ",
+      "round": "2回戦",
+      "status": "確定",
+      "candidate_start": "",
+      "candidate_end": "",
+      "candidate_dates": "",
+      "confirmed_date": "2026-09-29",
+      "kickoff": "19:00",
+      "duration_minutes": "120",
+      "home_away": "AWAY",
+      "opponent": "愛媛FC",
+      "venue": "ニンスタ",
+      "official_url": "https://www.fctokyo.co.jp/match/schedule/",
+      "ticket_url": "/ticket/",
+      "note": "",
+      "enabled": "1",
       "source": "FC東京公式",
       "display_start": "2026-09-29"
     },
@@ -1322,9 +1344,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-09-02T14:21:21.059197+00:00",
+    "built_at": "2026-09-02T23:58:52.342195+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/09/02 23:21",
+    "source_updated_at": "2026/09/03 08:58",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 42
