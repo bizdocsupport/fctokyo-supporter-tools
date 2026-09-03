@@ -326,7 +326,7 @@
       "official_url": "https://www.fctokyo.co.jp/match/schedule/",
       "ticket_url": "/ticket/",
       "note": "",
-      "enabled": "1",
+      "enabled": "True",
       "source": "FC東京公式",
       "display_start": "2026-09-29"
     },
@@ -1344,9 +1344,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-09-03T01:41:08.541503+00:00",
+    "built_at": "2026-09-03T14:25:23.051715+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/09/03 10:41",
+    "source_updated_at": "2026/09/03 23:25",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 42
