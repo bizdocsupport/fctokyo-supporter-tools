@@ -87,7 +87,18 @@ def make_session() -> requests.Session:
 
 
 def fetch(session: requests.Session, url: str, timeout: int = 25) -> str:
-    response = session.get(url, timeout=timeout)
+    try:
+        response = session.get(url, timeout=timeout)
+    except requests.exceptions.SSLError:
+        # 鹿島アントラーズ公式サイトでGitHub Actions環境から
+        # 証明書チェーン検証に失敗するケースがあるため、
+        # antlers.co.jp に限って証明書検証なしで1回だけ再試行する。
+        host = (urlparse(url).hostname or "").lower()
+        if host == "antlers.co.jp" or host.endswith(".antlers.co.jp"):
+            response = session.get(url, timeout=timeout, verify=False)
+        else:
+            raise
+
     response.raise_for_status()
     response.encoding = response.apparent_encoding or response.encoding
     return response.text
