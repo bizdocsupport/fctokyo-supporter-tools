@@ -3,17 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="FC東京の観戦写真と動画をまとめているInstagramへの入口ページです。">
-  <meta name="theme-color" content="#071a52">
-  <title>FC東京 観戦日記｜Instagram Archive</title>
+  <meta name="description" content="FC東京の観戦写真と動画をまとめているInstagramへの入口ページです。">  <title>FC東京 観戦日記｜Instagram Archive</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/site.css">
   <style>
+    html {
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-text-size-adjust: 100%;
+    }
     .instagram-matchdays {
       min-height: 100vh;
-      overflow: hidden;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       background:
         radial-gradient(circle at 86% 16%, rgba(7,88,217,.12), transparent 30%),
         radial-gradient(circle at 12% 78%, rgba(229,31,43,.08), transparent 28%),
@@ -21,6 +28,9 @@
     }
     .instagram-matchdays .global-header {
       background: rgba(255,255,255,.9);
+    }
+    .mobile-home-link {
+      display: none;
     }
     .instagram-hero {
       display: grid;
@@ -296,6 +306,23 @@
       }
     }
     @media (max-width: 700px) {
+      .mobile-home-link {
+        position: relative;
+        z-index: 20;
+        width: fit-content;
+        margin: 14px 16px 0;
+        padding: 10px 14px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #d5dbe5;
+        border-radius: 999px;
+        background: rgba(255,255,255,.96);
+        color: #071a52;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        box-shadow: 0 8px 24px rgba(7,26,82,.08);
+      }
       .instagram-hero {
         padding-top: 58px;
         gap: 45px;
@@ -338,6 +365,14 @@
       }
     }
   </style>
+
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/fctokyo-supporter-tools-icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/fctokyo-supporter-tools-icon-512.png">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <meta property="og:image" content="../assets/og-image.png">
+    <meta name="twitter:image" content="../assets/og-image.png">
+    <meta name="theme-color" content="#0d2ea8">
 </head>
 <body class="instagram-matchdays">
   <header class="global-header">
@@ -351,6 +386,8 @@
       <a href="../links/">LINKS</a>
     </nav>
   </header>
+
+  <a class="mobile-home-link" href="../" aria-label="トップページへ戻る">← トップへ戻る</a>
 
   <main>
     <section class="instagram-hero shell">
