@@ -247,55 +247,21 @@ def parse_fc_schedule(html: str) -> list[dict]:
             continue
         date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, side_index)
         side = norm(lines[side_index]).upper()
-
-        # 1試合分の範囲を次の「節/回戦」等までに限定する。
-        # 終了済み試合は中央表記が VS ではなく「2 - 2」のようなスコアになるため、
-        # 次試合の VS まで探索すると日付・会場と対戦相手が混線してしまう。
-        block_end = min(side_index + 24, len(lines))
-        boundary_pattern = re.compile(r"^(?:第?\d+節|\d+回戦|ラウンド.*|準々決勝|準決勝|決勝)$")
-        for j in range(side_index + 1, block_end):
-            value = norm(lines[j])
-            if boundary_pattern.fullmatch(value):
-                block_end = j
-                break
-            if re.fullmatch(r"20\d{2}\.\d{2}", value):
-                block_end = j
-                break
-            if _looks_like_competition(value, heading_titles) and _has_year_month_soon(lines, j):
-                block_end = j
-                break
-
         vs_index = next(
-            (j for j in range(side_index + 1, block_end) if norm(lines[j]).upper().rstrip(".") == "VS"),
+            (j for j in range(side_index + 1, min(side_index + 16, len(lines))) if norm(lines[j]).upper().rstrip(".") == "VS"),
             None,
         )
+        if vs_index is None or vs_index - 1 <= side_index or vs_index + 1 >= len(lines):
+            i += 1
+            continue
 
-        if vs_index is not None and vs_index - 1 > side_index and vs_index + 1 < block_end:
-            home_index = vs_index - 1
-            away_index = vs_index + 1
-        else:
-            # 終了済み試合: 「HOME/AWAY, 会場, ホーム, 得点, -, 得点, アウェイ」
-            # のスコア区切りを同一試合ブロック内だけで探す。
-            score_dash = next(
-                (j for j in range(side_index + 2, block_end - 1)
-                 if norm(lines[j]) in ("-", "－", "–", "—")
-                 and re.fullmatch(r"\d+", norm(lines[j - 1]))
-                 and re.fullmatch(r"\d+", norm(lines[j + 1]))),
-                None,
-            )
-            if score_dash is None or score_dash - 2 <= side_index or score_dash + 2 >= block_end:
-                i += 1
-                continue
-            home_index = score_dash - 2
-            away_index = score_dash + 2
-
-        home = normalize_team(lines[home_index])
-        away = normalize_team(lines[away_index])
+        home = normalize_team(lines[vs_index - 1])
+        away = normalize_team(lines[vs_index + 1])
         if home == away or "FC東京" not in (home, away):
             i += 1
             continue
 
-        stadium_values = [norm(x) for x in lines[side_index + 1:home_index] if norm(x)]
+        stadium_values = [norm(x) for x in lines[side_index + 1:vs_index - 1] if norm(x)]
         stadium = stadium_values[0] if stadium_values else "未定"
         round_name = _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
@@ -319,7 +285,7 @@ def parse_fc_schedule(html: str) -> list[dict]:
             "stadium": stadium,
             "match_url": FC_SCHEDULE_URL,
         })
-        i = max(home_index, away_index) + 1
+        i = vs_index + 2
 
     unique = {}
     for item in results:
@@ -636,7 +602,7 @@ def _extract_general_from_scope(scope: str, full_text: str, match: dict) -> Opti
     return None
 
 
-def _extract_structured_table_general(soup: BeautifulSoup, match: dict) -> Optional[str]:
+def _extract_structured_table_general(soup: BeautifulSoup, match: dict, full_text: str = "") -> Optional[str]:
     """販売表の「一般」列、または対象試合行の最後の販売日時を取得する。"""
     aliases = aliases_for("FC東京")
     markers = _match_date_markers(match)
@@ -665,9 +631,30 @@ def _extract_structured_table_general(soup: BeautifulSoup, match: dict) -> Optio
                 continue
 
             if general_index is not None and general_index < len(cells):
-                values = _extract_md_time_tokens(cells[general_index], match)
+                general_cell = cells[general_index]
+                values = _extract_md_time_tokens(general_cell, match)
                 if values:
                     return values[0]
+
+                # 東京Vなど、表には発売「日」だけを載せ、
+                # 販売開始時刻を表の外の注記に共通記載するサイトに対応する。
+                date_only = re.search(
+                    r"(\d{1,2})\s*(?:/|\.|月)\s*(\d{1,2})(?:日)?(?:\([^)]+\))?",
+                    general_cell,
+                )
+                if date_only:
+                    combined = norm(row_text + " " + full_text)
+                    time_patterns = [
+                        r"会員割引[^。]{0,20}?一般販売ともに\s*(\d{1,2}):(\d{2})",
+                        r"販売開始初日の販売開始時間は[^。]{0,100}?(\d{1,2}):(\d{2})",
+                        r"販売開始時間は[^。]{0,100}?(\d{1,2}):(\d{2})",
+                    ]
+                    for pattern in time_patterns:
+                        tm = re.search(pattern, combined)
+                        if tm:
+                            month, day = map(int, date_only.groups())
+                            hour, minute = map(int, tm.groups())
+                            return _iso_sale(match, month, day, hour, minute)
 
             values = _extract_md_time_tokens(row_text, match)
             before_match = [v for v in values if datetime.fromisoformat(v) < match_dt]
@@ -676,12 +663,16 @@ def _extract_structured_table_general(soup: BeautifulSoup, match: dict) -> Optio
     return None
 
 
-def extract_away_general_sale(html: str, match: dict) -> Optional[str]:
+def extract_away_general_sale(
+    html: str,
+    match: dict,
+    supplemental_text: str = "",
+) -> Optional[str]:
     soup, lines = lines_from_html(html)
-    structured = _extract_structured_table_general(soup, match)
+    full_text = norm(" ".join(lines) + " " + supplemental_text)
+    structured = _extract_structured_table_general(soup, match, full_text)
     if structured:
         return structured
-    full_text = norm(" ".join(lines))
     fc_aliases = [norm(x) for x in aliases_for("FC東京")]
     markers = _match_date_markers(match)
     windows = []
@@ -720,6 +711,9 @@ def inspect_away_sources(session: requests.Session, match: dict, source: dict) -
     for url, label in urls:
         try:
             html = fetch(session, url)
+            parent_soup = BeautifulSoup(html, "html.parser")
+            parent_text = norm(soup_with_image_alt(html).get_text(" ", strip=True))
+
             general = extract_away_general_sale(html, match)
             if general:
                 return {
@@ -728,6 +722,41 @@ def inspect_away_sources(session: requests.Session, match: dict, source: dict) -
                     "source_name": label,
                     "note": "対戦相手FC東京の試合ブロックから一般発売日時を取得",
                 }
+
+            # 販売スケジュールをiframeで埋め込むクラブ（東京V等）に対応。
+            # 親ページの注記（例: 販売開始時刻）も補助テキストとして利用する。
+            base_host = urlparse(url).netloc
+            iframe_urls = []
+            for iframe in parent_soup.find_all("iframe"):
+                src = (iframe.get("src") or "").strip()
+                if not src:
+                    continue
+                iframe_url = urljoin(url, src)
+                parsed = urlparse(iframe_url)
+                if parsed.scheme not in ("http", "https"):
+                    continue
+                if parsed.netloc and parsed.netloc != base_host:
+                    continue
+                if iframe_url not in iframe_urls:
+                    iframe_urls.append(iframe_url)
+
+            for iframe_url in iframe_urls[:5]:
+                try:
+                    iframe_html = fetch(session, iframe_url)
+                    general = extract_away_general_sale(
+                        iframe_html,
+                        match,
+                        supplemental_text=parent_text,
+                    )
+                    if general:
+                        return {
+                            "general_at": general,
+                            "source_url": url,
+                            "source_name": label,
+                            "note": "公式ページ内の販売日程iframeから一般発売日時を取得",
+                        }
+                except Exception as iframe_exc:
+                    errors.append(f"{label} iframe {iframe_url}: {iframe_exc}")
         except Exception as exc:
             errors.append(f"{label}: {exc}")
     return {
