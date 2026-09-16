@@ -218,6 +218,36 @@ def parse_fc_schedule(html: str) -> list[dict]:
     current_year = None
     results: list[dict] = []
 
+    date_re = re.compile(r"\d{1,2}月\d{1,2}日\([^)]+\)")
+
+    def next_match_boundary(start: int) -> int:
+        """Return the next match-date line after the current HOME/AWAY block."""
+        for k in range(start, len(lines)):
+            value = norm(lines[k])
+            if date_re.search(value):
+                return k
+            if re.fullmatch(r"20\d{2}\.\d{2}", value):
+                return k
+            if _looks_like_competition(value, heading_titles):
+                return k
+        return len(lines)
+
+    def next_team_after_score(start: int, end: int) -> Optional[int]:
+        """Skip PK-score tokens such as [ 5 - 4 ] and return the away-team line."""
+        score_tokens = {"-", "[", "]", "（", "）", "(", ")"}
+        for k in range(start, end):
+            value = norm(lines[k])
+            if not value:
+                continue
+            if value in score_tokens:
+                continue
+            if re.fullmatch(r"\d+", value):
+                continue
+            if value.upper() in {"PK", "PEN", "PENS"}:
+                continue
+            return k
+        return None
+
     i = 0
     while i < len(lines):
         line = norm(lines[i])
@@ -239,10 +269,10 @@ def parse_fc_schedule(html: str) -> list[dict]:
 
         # 公式サイトでは候補日が同一行の場合と、HTML要素の都合で
         # 「5月15日(土) or」「5月16日(日)」のように分割される場合がある。
-        # 日付を含む行から最大4行を連結し、or以降の第2候補日と別行の時刻も解析する。
-        if not re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", line):
+        if not date_re.search(line):
             i += 1
             continue
+
         date_scope = " ".join(lines[i:min(i + 4, len(lines))])
         date_info = _parse_match_date(date_scope, current_year)
         if not date_info:
@@ -256,23 +286,62 @@ def parse_fc_schedule(html: str) -> list[dict]:
         if side_index is None:
             i += 1
             continue
+
         date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, side_index)
         side = norm(lines[side_index]).upper()
-        vs_index = next(
-            (j for j in range(side_index + 1, min(side_index + 16, len(lines))) if norm(lines[j]).upper().rstrip(".") == "VS"),
-            None,
-        )
-        if vs_index is None or vs_index - 1 <= side_index or vs_index + 1 >= len(lines):
-            i += 1
+
+        # 重要:
+        # 次の試合の日付より先まで探索しない。
+        # 終了済み試合は "VS" ではなく "2 - 0" のような表示になるため、
+        # 旧実装では次の未開催試合の "VS" を拾って2試合を混ぜることがあった。
+        block_end = next_match_boundary(side_index + 1)
+
+        separator_index = None
+        home_index = None
+        away_index = None
+
+        # 未開催試合: FC東京 / VS / 相手
+        for j in range(side_index + 1, block_end):
+            if norm(lines[j]).upper().rstrip(".") == "VS":
+                if j - 1 > side_index and j + 1 < block_end:
+                    separator_index = j
+                    home_index = j - 1
+                    away_index = j + 1
+                break
+
+        # 終了済み試合: FC東京 / 2 / - / 0 / 相手
+        # PK戦がある場合は 1 - 1 [ 5 - 4 ] 相手 のような追加スコアを飛ばす。
+        if separator_index is None:
+            for j in range(side_index + 2, block_end - 1):
+                if (
+                    re.fullmatch(r"\d+", norm(lines[j - 1]))
+                    and norm(lines[j]) == "-"
+                    and re.fullmatch(r"\d+", norm(lines[j + 1]))
+                ):
+                    candidate_home = j - 2
+                    candidate_away = next_team_after_score(j + 2, block_end)
+                    if candidate_home > side_index and candidate_away is not None:
+                        separator_index = j
+                        home_index = candidate_home
+                        away_index = candidate_away
+                    break
+
+        if separator_index is None or home_index is None or away_index is None:
+            # この試合だけ解析できなくても、次の試合ブロックには跨がない。
+            i = max(i + 1, block_end)
             continue
 
-        home = normalize_team(lines[vs_index - 1])
-        away = normalize_team(lines[vs_index + 1])
+        home = normalize_team(lines[home_index])
+        away = normalize_team(lines[away_index])
         if home == away or "FC東京" not in (home, away):
-            i += 1
+            i = max(i + 1, block_end)
             continue
 
-        stadium_values = [norm(x) for x in lines[side_index + 1:vs_index - 1] if norm(x)]
+        stadium_values = [
+            norm(x)
+            for x in lines[side_index + 1:home_index]
+            if norm(x)
+        ]
         stadium = stadium_values[0] if stadium_values else "未定"
         round_name = _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
@@ -296,7 +365,8 @@ def parse_fc_schedule(html: str) -> list[dict]:
             "stadium": stadium,
             "match_url": FC_SCHEDULE_URL,
         })
-        i = vs_index + 2
+
+        i = max(i + 1, block_end)
 
     unique = {}
     for item in results:
