@@ -18,7 +18,7 @@ from urllib3.util.retry import Retry
 
 BASE_DIR = Path(__file__).resolve().parent
 JST = timezone(timedelta(hours=9))
-FC_SCHEDULE_URL = "https://www.fctokyo.co.jp/match/schedule/"
+FC_SCHEDULE_URL = "https://www.fctokyo.co.jp/schedule"
 FC_TICKET_NEWS_URL = "https://www.fctokyo.co.jp/news/?slug=ticket"
 FC_PRICE_URL = "https://www.fctokyo.co.jp/ticket/price/"
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FC-Tokyo-Ticket-List/2.0"}
@@ -211,6 +211,13 @@ def _find_round(lines: list[str], date_index: int, comp_group: str) -> str:
 
 
 def parse_fc_schedule(html: str) -> list[dict]:
+    """
+    Parse FC Tokyo's official schedule.
+
+    Supports both layouts:
+      old: date -> HOME/AWAY -> stadium -> home -> VS/score -> away
+      current: date -> kickoff -> home -> VS/score -> away -> stadium
+    """
     soup, lines = lines_from_html(html)
     heading_titles = {norm(h.get_text(" ", strip=True)) for h in soup.find_all(["h2", "h3"])}
     current_comp = None
@@ -220,9 +227,8 @@ def parse_fc_schedule(html: str) -> list[dict]:
 
     date_re = re.compile(r"\d{1,2}月\d{1,2}日\([^)]+\)")
 
-    def next_match_boundary(start: int) -> int:
-        """Return the next match-date line after the current HOME/AWAY block."""
-        for k in range(start, len(lines)):
+    def next_match_boundary(start_index: int) -> int:
+        for k in range(start_index, len(lines)):
             value = norm(lines[k])
             if date_re.search(value):
                 return k
@@ -232,25 +238,100 @@ def parse_fc_schedule(html: str) -> list[dict]:
                 return k
         return len(lines)
 
-    def next_team_after_score(start: int, end: int) -> Optional[int]:
-        """Skip PK-score tokens such as [ 5 - 4 ] and return the away-team line."""
-        score_tokens = {"-", "[", "]", "（", "）", "(", ")"}
-        for k in range(start, end):
+    def find_explicit_side(start_index: int, end_index: int) -> Optional[int]:
+        return next(
+            (
+                j for j in range(start_index, min(end_index, start_index + 14))
+                if norm(lines[j]).upper() in ("HOME", "AWAY")
+            ),
+            None,
+        )
+
+    def next_team_after_score(start_index: int, end_index: int) -> Optional[int]:
+        # Skip score / PK tokens and common result labels.
+        skip_exact = {
+            "-", "[", "]", "(", ")", "（", "）",
+            "PK", "PEN", "PENS", "試合結果", "MATCH RESULT",
+        }
+        for k in range(start_index, end_index):
             value = norm(lines[k])
             if not value:
                 continue
-            if value in score_tokens:
+            if value.upper() in skip_exact:
                 continue
             if re.fullmatch(r"\d+", value):
-                continue
-            if value.upper() in {"PK", "PEN", "PENS"}:
                 continue
             return k
         return None
 
+    def find_match_teams(search_start: int, block_end: int) -> tuple[Optional[int], Optional[int], Optional[int]]:
+        # Upcoming match: home / VS / away
+        for j in range(search_start, block_end):
+            if norm(lines[j]).upper().rstrip(".") == "VS":
+                if j - 1 >= search_start and j + 1 < block_end:
+                    return j - 1, j + 1, j
+
+        # Completed match: home / 2 / - / 0 / away
+        for j in range(search_start + 2, block_end - 1):
+            if (
+                re.fullmatch(r"\d+", norm(lines[j - 1]))
+                and norm(lines[j]) == "-"
+                and re.fullmatch(r"\d+", norm(lines[j + 1]))
+            ):
+                home_index = j - 2
+                away_index = next_team_after_score(j + 2, block_end)
+                if home_index >= search_start and away_index is not None:
+                    return home_index, away_index, j
+
+        return None, None, None
+
+    def find_stadium(
+        explicit_side_index: Optional[int],
+        home_index: int,
+        away_index: int,
+        block_end: int,
+    ) -> str:
+        # Old layout put the stadium between HOME/AWAY and the home team.
+        if explicit_side_index is not None:
+            candidates = [
+                norm(x)
+                for x in lines[explicit_side_index + 1:home_index]
+                if norm(x)
+            ]
+            if candidates:
+                return candidates[0]
+
+        # Current layout puts the stadium after the away team.
+        noise_exact = {
+            "ゲームインフォメーション",
+            "試合結果",
+            "詳細",
+            "備考",
+            "TV中継",
+            "チケット",
+        }
+        noise_parts = (
+            "DAZN", "NHK", "日本テレビ", "テレビ朝日", "フジテレビ",
+            "ABEMA", "TVer", "ゲームインフォメーション",
+        )
+        for k in range(away_index + 1, block_end):
+            value = norm(lines[k])
+            if not value:
+                continue
+            if value in noise_exact:
+                continue
+            if any(part in value for part in noise_parts):
+                continue
+            # Sponsor/event copy is generally longer; stadium labels are short.
+            if len(value) <= 18:
+                return value
+
+        return "未定"
+
     i = 0
     while i < len(lines):
         line = norm(lines[i])
+
         if _looks_like_competition(line, heading_titles) and _has_year_month_soon(lines, i):
             current_comp = line
             current_group = competition_group(line)
@@ -267,69 +348,31 @@ def parse_fc_schedule(html: str) -> list[dict]:
             i += 1
             continue
 
-        # 公式サイトでは候補日が同一行の場合と、HTML要素の都合で
-        # 「5月15日(土) or」「5月16日(日)」のように分割される場合がある。
         if not date_re.search(line):
             i += 1
             continue
 
-        date_scope = " ".join(lines[i:min(i + 4, len(lines))])
+        block_end = next_match_boundary(i + 1)
+
+        # Date can be split across nearby text nodes; keep the existing
+        # multi-line candidate-date support.
+        date_scope = " ".join(lines[i:min(i + 4, block_end)])
         date_info = _parse_match_date(date_scope, current_year)
         if not date_info:
-            i += 1
-            continue
-
-        side_index = next(
-            (j for j in range(i + 1, min(i + 12, len(lines))) if norm(lines[j]).upper() in ("HOME", "AWAY")),
-            None,
-        )
-        if side_index is None:
-            i += 1
-            continue
-
-        date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, side_index)
-        side = norm(lines[side_index]).upper()
-
-        # 重要:
-        # 次の試合の日付より先まで探索しない。
-        # 終了済み試合は "VS" ではなく "2 - 0" のような表示になるため、
-        # 旧実装では次の未開催試合の "VS" を拾って2試合を混ぜることがあった。
-        block_end = next_match_boundary(side_index + 1)
-
-        separator_index = None
-        home_index = None
-        away_index = None
-
-        # 未開催試合: FC東京 / VS / 相手
-        for j in range(side_index + 1, block_end):
-            if norm(lines[j]).upper().rstrip(".") == "VS":
-                if j - 1 > side_index and j + 1 < block_end:
-                    separator_index = j
-                    home_index = j - 1
-                    away_index = j + 1
-                break
-
-        # 終了済み試合: FC東京 / 2 / - / 0 / 相手
-        # PK戦がある場合は 1 - 1 [ 5 - 4 ] 相手 のような追加スコアを飛ばす。
-        if separator_index is None:
-            for j in range(side_index + 2, block_end - 1):
-                if (
-                    re.fullmatch(r"\d+", norm(lines[j - 1]))
-                    and norm(lines[j]) == "-"
-                    and re.fullmatch(r"\d+", norm(lines[j + 1]))
-                ):
-                    candidate_home = j - 2
-                    candidate_away = next_team_after_score(j + 2, block_end)
-                    if candidate_home > side_index and candidate_away is not None:
-                        separator_index = j
-                        home_index = candidate_home
-                        away_index = candidate_away
-                    break
-
-        if separator_index is None or home_index is None or away_index is None:
-            # この試合だけ解析できなくても、次の試合ブロックには跨がない。
             i = max(i + 1, block_end)
             continue
+
+        explicit_side_index = find_explicit_side(i + 1, block_end)
+        search_start = explicit_side_index + 1 if explicit_side_index is not None else i + 1
+
+        home_index, away_index, separator_index = find_match_teams(search_start, block_end)
+        if home_index is None or away_index is None or separator_index is None:
+            i = max(i + 1, block_end)
+            continue
+
+        # Kickoff time is now commonly between the date and the home team.
+        kickoff_end = explicit_side_index if explicit_side_index is not None else home_index
+        date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, kickoff_end)
 
         home = normalize_team(lines[home_index])
         away = normalize_team(lines[away_index])
@@ -337,18 +380,32 @@ def parse_fc_schedule(html: str) -> list[dict]:
             i = max(i + 1, block_end)
             continue
 
-        stadium_values = [
-            norm(x)
-            for x in lines[side_index + 1:home_index]
-            if norm(x)
-        ]
-        stadium = stadium_values[0] if stadium_values else "未定"
+        # Prefer explicit HOME/AWAY when the old page layout provides it;
+        # otherwise infer it from the home/away team positions.
+        if explicit_side_index is not None:
+            side = norm(lines[explicit_side_index]).upper()
+        else:
+            side = "HOME" if home == "FC東京" else "AWAY"
+
+        stadium = find_stadium(
+            explicit_side_index,
+            home_index,
+            away_index,
+            block_end,
+        )
         round_name = _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
+
         match_key = "|".join([
-            "2026/27", current_group, current_comp, round_name,
-            date_info["date_text"], home, away,
+            "2026/27",
+            current_group,
+            current_comp,
+            round_name,
+            date_info["date_text"],
+            home,
+            away,
         ])
+
         results.append({
             "match_key": match_key,
             "season": "2026/27",
