@@ -230,8 +230,25 @@ def parse_fc_schedule(html: str) -> list[dict]:
     def next_match_boundary(start_index: int) -> int:
         for k in range(start_index, len(lines)):
             value = norm(lines[k])
+
             if date_re.search(value):
+                # 候補日がHTML要素の都合で
+                #   5月22日(土) or
+                #   5月23日(日)
+                # の2行に分かれるケースは、2行目を次の試合とみなさない。
+                prev = norm(lines[k - 1]) if k > 0 else ""
+                prev2 = norm(lines[k - 2]) if k > 1 else ""
+                is_alternate_date = (
+                    bool(re.search(r"\bor\s*$", prev, re.I))
+                    or (
+                        prev.lower() == "or"
+                        and bool(date_re.search(prev2))
+                    )
+                )
+                if is_alternate_date:
+                    continue
                 return k
+
             if re.fullmatch(r"20\d{2}\.\d{2}", value):
                 return k
             if _looks_like_competition(value, heading_titles):

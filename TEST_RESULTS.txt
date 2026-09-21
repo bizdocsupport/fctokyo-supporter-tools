@@ -1,0 +1,31 @@
+
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 785, in warm_spreadsheet_runtime
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 720, in _warm_feature_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 704, in _warm_collaboration_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/generated/interface/models.py", line 32317, in hydrate_crdt_from_proto
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/remote.py", line 749, in __call__
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/client.py", line 150, in call
+artifact_tool.rpc.client.RemoteError: hydrateCrdtFromProto requires an empty collaborative document.
+test_schedule_or_date_split_lines (test_alternate_date_regression.AlternateDateRegressionTest.test_schedule_or_date_split_lines) ... ok
+test_completed_match_does_not_mix_with_next_match (test_current_schedule_layout.CurrentScheduleParserTests.test_completed_match_does_not_mix_with_next_match) ... ok
+test_current_layout_without_home_away_labels (test_current_schedule_layout.CurrentScheduleParserTests.test_current_layout_without_home_away_labels) ... ok
+test_old_layout_still_supported (test_current_schedule_layout.CurrentScheduleParserTests.test_old_layout_still_supported) ... ok
+test_cerezo_table_general_column (test_parsers.ParserTests.test_cerezo_table_general_column) ... ok
+test_gamba_away_general (test_parsers.ParserTests.test_gamba_away_general) ... ok
+test_home_article_english_on_sale_date (test_parsers.ParserTests.test_home_article_english_on_sale_date) ... ok
+test_home_article_sales (test_parsers.ParserTests.test_home_article_sales) ... ok
+test_japanese_general_sale_takes_priority_over_english (test_parsers.ParserTests.test_japanese_general_sale_takes_priority_over_english) ... ok
+test_kobe_date_plus_global_time (test_parsers.ParserTests.test_kobe_date_plus_global_time) ... ok
+test_price_sales (test_parsers.ParserTests.test_price_sales) ... ok
+test_schedule_all_competitions (test_parsers.ParserTests.test_schedule_all_competitions) ... ok
+test_schedule_or_date_same_line (test_parsers.ParserTests.test_schedule_or_date_same_line) ... ok
+test_schedule_or_date_split_lines (test_parsers.ParserTests.test_schedule_or_date_split_lines) ... ok
+test_unpublished_does_not_pick_other_match (test_parsers.ParserTests.test_unpublished_does_not_pick_other_match) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.020s
+
+OK
