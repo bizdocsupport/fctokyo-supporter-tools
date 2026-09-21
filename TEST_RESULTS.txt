@@ -13,6 +13,7 @@ test_schedule_or_date_split_lines (test_alternate_date_regression.AlternateDateR
 test_completed_match_does_not_mix_with_next_match (test_current_schedule_layout.CurrentScheduleParserTests.test_completed_match_does_not_mix_with_next_match) ... ok
 test_current_layout_without_home_away_labels (test_current_schedule_layout.CurrentScheduleParserTests.test_current_layout_without_home_away_labels) ... ok
 test_old_layout_still_supported (test_current_schedule_layout.CurrentScheduleParserTests.test_old_layout_still_supported) ... ok
+test_current_live_card_layout (test_live_schedule_fallback.LiveScheduleFallbackTests.test_current_live_card_layout) ... ok
 test_cerezo_table_general_column (test_parsers.ParserTests.test_cerezo_table_general_column) ... ok
 test_gamba_away_general (test_parsers.ParserTests.test_gamba_away_general) ... ok
 test_home_article_english_on_sale_date (test_parsers.ParserTests.test_home_article_english_on_sale_date) ... ok
@@ -26,6 +27,6 @@ test_schedule_or_date_split_lines (test_parsers.ParserTests.test_schedule_or_dat
 test_unpublished_does_not_pick_other_match (test_parsers.ParserTests.test_unpublished_does_not_pick_other_match) ... ok
 
 ----------------------------------------------------------------------
-Ran 15 tests in 0.020s
+Ran 16 tests in 0.022s
 
 OK
