@@ -397,6 +397,28 @@
       "display_start": "2026-10-10"
     },
     {
+      "match_id": "TOP-AUTO-5D2D24966513",
+      "team": "TOP",
+      "competition": "Jリーグ ヤマザキビスケット ルヴァンカップ 第3節",
+      "round": "第3節",
+      "status": "確定",
+      "candidate_start": "",
+      "candidate_end": "",
+      "candidate_dates": "",
+      "confirmed_date": "2026-10-14",
+      "kickoff": "19:00",
+      "duration_minutes": "120",
+      "home_away": "AWAY",
+      "opponent": "水戸ホーリーホック",
+      "venue": "未定",
+      "official_url": "https://www.fctokyo.co.jp/match/schedule/",
+      "ticket_url": "/ticket/",
+      "note": "",
+      "enabled": "1",
+      "source": "FC東京公式",
+      "display_start": "2026-10-14"
+    },
+    {
       "match_id": "TOP-2026-J1-10",
       "team": "TOP",
       "competition": "J1リーグ 第10節",
@@ -1344,12 +1366,12 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-09-29T01:44:28.193630+00:00",
+    "built_at": "2026-09-29T16:28:32.585098+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/09/29 10:44",
+    "source_updated_at": "2026/09/30 01:28",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
-    "official_match_count": 42
+    "official_match_count": 43
   },
   "config": {
     "top_calendar_id": "2b5333f95a1f1792258c130f76699da353b56459e66d46478079edd23a5c3188@group.calendar.google.com",
