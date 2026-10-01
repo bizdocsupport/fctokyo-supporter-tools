@@ -410,7 +410,7 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "水戸ホーリーホック",
-      "venue": "未定",
+      "venue": "Ksスタ",
       "official_url": "https://www.fctokyo.co.jp/match/schedule/",
       "ticket_url": "/ticket/",
       "note": "",
@@ -1366,9 +1366,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-10-01T01:11:38.675743+00:00",
+    "built_at": "2026-10-01T17:00:04.139483+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/10/01 10:11",
+    "source_updated_at": "2026/10/02 02:00",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 43
