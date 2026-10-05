@@ -399,8 +399,8 @@
     {
       "match_id": "TOP-AUTO-5D2D24966513",
       "team": "TOP",
-      "competition": "Jリーグ ヤマザキビスケット ルヴァンカップ 第3節",
-      "round": "第3節",
+      "competition": "Jリーグ ヤマザキビスケット ルヴァンカップ 3回戦",
+      "round": "3回戦",
       "status": "確定",
       "candidate_start": "",
       "candidate_end": "",
@@ -1366,9 +1366,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-10-05T00:40:07.076004+00:00",
+    "built_at": "2026-10-05T19:13:54.142902+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/10/05 09:40",
+    "source_updated_at": "2026/10/06 04:13",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 43
