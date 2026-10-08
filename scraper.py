@@ -128,8 +128,41 @@ def competition_group(name: str) -> str:
 
 def _looks_like_competition(line: str, heading_titles: set[str]) -> bool:
     n = norm(line)
-    known = ("J1リーグ", "ルヴァンカップ", "天皇杯", "プレシーズンマッチ", "国際親善試合")
-    return n in heading_titles or any(k in n for k in known)
+    known = (
+        "J1リーグ",
+        "J1百年構想リーグ",
+        "ルヴァンカップ",
+        "天皇杯",
+        "プレシーズンマッチ",
+        "国際親善試合",
+    )
+    if any(k in n for k in known):
+        return True
+    # Heading tags are useful for less common competitions, but YYYY.MM month
+    # headings are also h2/h3 on older pages and must never be mistaken for a
+    # competition name.
+    if n not in heading_titles:
+        return False
+    if re.fullmatch(r"20\d{2}\.\d{2}", n):
+        return False
+    return any(k in n for k in ("リーグ", "カップ", "杯", "マッチ", "大会"))
+
+
+def _split_competition_round(line: str) -> tuple[str, str]:
+    """Split current schedule labels such as ``Ｊ１リーグ 第9節``.
+
+    Older FC Tokyo pages expose the competition and round as separate rows,
+    while the current schedule page can put both in a single row.  Keep the
+    competition name stable and retain only the round suffix for ``round_name``.
+    """
+    n = norm(line)
+    m = re.match(
+        r"^(?P<competition>.*?)(?:\s+)(?P<round>第?\d+節|第?\d+回戦|\d+回戦|ラウンド[^ ]*|準々決勝|準決勝|決勝)$",
+        n,
+    )
+    if not m:
+        return n, ""
+    return norm(m.group("competition")), norm(m.group("round"))
 
 
 def _has_year_month_soon(lines: list[str], index: int) -> bool:
@@ -315,7 +348,10 @@ def parse_fc_schedule(html: str) -> list[dict]:
     }
     current_comp = None
     current_group = None
+    current_round = ""
     current_year = None
+    year_is_explicit = False
+    last_month: Optional[int] = None
     results: list[dict] = []
 
     def _fixture_value(segment: list[str], idx: int) -> Optional[str]:
@@ -351,18 +387,23 @@ def parse_fc_schedule(html: str) -> list[dict]:
     while i < len(lines):
         line = norm(lines[i])
 
-        if (
-            _looks_like_competition(line, heading_titles)
-            and _has_year_month_soon(lines, i)
-        ):
-            current_comp = line
-            current_group = competition_group(line)
+        if _looks_like_competition(line, heading_titles):
+            current_comp, current_round = _split_competition_round(line)
+            current_group = competition_group(current_comp)
+            # The current FC Tokyo schedule page no longer always emits
+            # ``YYYY.MM`` month headings.  Use the local year provisionally;
+            # a following explicit heading still overrides this value.
+            if current_year is None:
+                current_year = datetime.now(JST).year
+                year_is_explicit = False
             i += 1
             continue
 
         ym = re.fullmatch(r"(20\d{2})\.(\d{2})", line)
         if ym and current_comp:
             current_year = int(ym.group(1))
+            year_is_explicit = True
+            last_month = int(ym.group(2))
             i += 1
             continue
 
@@ -373,6 +414,20 @@ def parse_fc_schedule(html: str) -> list[dict]:
         if not re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", line):
             i += 1
             continue
+
+        # When YYYY.MM headings are absent, infer a Dec -> Jan season rollover
+        # from chronological month order.  This also handles a page opened late
+        # in the year whose first visible fixture is in Jan-Mar of the next year.
+        month_match = re.search(r"(\d{1,2})月\d{1,2}日\([^)]+\)", line)
+        if month_match and not year_is_explicit:
+            month_value = int(month_match.group(1))
+            now_jst = datetime.now(JST)
+            if last_month is None:
+                if now_jst.month >= 10 and month_value <= 3:
+                    current_year = now_jst.year + 1
+            elif last_month >= 10 and month_value <= 3:
+                current_year += 1
+            last_month = month_value
 
         # Never let one fixture borrow the VS/team labels of the next fixture.
         boundary = _next_match_boundary(lines, i, current_year)
@@ -489,7 +544,7 @@ def parse_fc_schedule(html: str) -> list[dict]:
             [home_pos, away_pos],
             side_pos,
         )
-        round_name = _find_round(lines, i, current_group)
+        round_name = current_round or _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
 
         match_key = "|".join([
