@@ -44,6 +44,7 @@ TEAM_ALIASES = {
     "ファジアーノ岡山": ["ファジアーノ岡山", "岡山"],
     "サンフレッチェ広島": ["サンフレッチェ広島", "広島"],
     "アビスパ福岡": ["アビスパ福岡", "福岡"],
+    "愛媛FC": ["愛媛FC", "愛媛"],
     "V・ファーレン長崎": ["V・ファーレン長崎", "Ｖ・ファーレン長崎", "長崎"],
     "ボルシア ドルトムント": ["ボルシア ドルトムント", "ボルシア・ドルトムント", "ドルトムント"],
     "未定": ["未定"],
@@ -218,7 +219,6 @@ def _known_team_from_line(value: str) -> Optional[str]:
                 return canonical
     return None
 
-
 def _next_match_boundary(lines: list[str], date_index: int, year_hint: int) -> int:
     """
     Find the next match/date boundary without crossing into the next fixture.
@@ -243,43 +243,118 @@ def _next_match_boundary(lines: list[str], date_index: int, year_hint: int) -> i
         return j
     return limit
 
+def _infer_stadium_from_segment(
+    segment: list[str],
+    team_positions: list[int],
+    side_pos: Optional[int],
+) -> str:
+    """
+    Best-effort stadium extraction for both layouts.
 
-def _infer_stadium_from_segment(segment: list[str], team_positions: list[int], side_pos: Optional[int]) -> str:
-    """Best-effort stadium extraction for both old and current schedule layouts."""
-    first_team = min(team_positions) if team_positions else len(segment)
-    start = (side_pos + 1) if side_pos is not None else 1
+    Legacy layout:
+      date -> HOME/AWAY -> stadium -> home -> VS -> away
+
+    Current layout:
+      date -> time -> home -> VS/score -> away -> [game info] -> stadium -> DAZN
+    """
+    if not team_positions:
+        return "未定"
+
+    first_team = min(team_positions)
+    last_team = max(team_positions)
 
     structural = re.compile(
-        r"^(?:HOME|AWAY|VS|試合結果|試合情報|中継情報[:：]?.*|備考[:：]?.*|"
+        r"^(?:HOME|AWAY|VS|試合結果|試合情報|ゲームインフォメーション|"
+        r"中継情報[:：]?.*|備考[:：]?.*|DAZN|ABEMA|"
         r"\d{1,2}:\d{2}|\d+|[-–—]|\d+\s*[-–—]\s*\d+)$",
         re.I,
     )
-    for idx in range(start, first_team):
-        value = norm(segment[idx])
+
+    def plausible(value: str) -> bool:
+        value = norm(value)
         if not value or structural.fullmatch(value):
-            continue
+            return False
         if re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", value):
-            continue
-        if re.search(r"(?:第?\d+節|\d+回戦|ラウンド|準々決勝|準決勝|決勝)", value):
-            continue
+            return False
+        if re.search(
+            r"(?:第?\d+節|\d+回戦|ラウンド|準々決勝|準決勝|決勝)",
+            value,
+        ):
+            return False
         if _known_team_from_line(value):
-            continue
-        return value
+            return False
+        return True
+
+    # Old layout: the stadium sits between HOME/AWAY and the first team.
+    if side_pos is not None:
+        for idx in range(side_pos + 1, first_team):
+            value = norm(segment[idx])
+            if plausible(value):
+                return value
+
+    # Current layout: the stadium normally appears immediately after the away team.
+    for idx in range(last_team + 1, len(segment)):
+        value = norm(segment[idx])
+        if plausible(value):
+            return value
+
+    # Defensive fallback for odd legacy variants without an explicit HOME/AWAY label.
+    for idx in range(1, first_team):
+        value = norm(segment[idx])
+        if plausible(value):
+            return value
+
     return "未定"
 
 
 def parse_fc_schedule(html: str) -> list[dict]:
     soup, lines = lines_from_html(html)
-    heading_titles = {norm(h.get_text(" ", strip=True)) for h in soup.find_all(["h2", "h3"])}
+    heading_titles = {
+        norm(h.get_text(" ", strip=True))
+        for h in soup.find_all(["h2", "h3"])
+    }
     current_comp = None
     current_group = None
     current_year = None
     results: list[dict] = []
 
+    def _fixture_value(segment: list[str], idx: int) -> Optional[str]:
+        if idx < 0 or idx >= len(segment):
+            return None
+        value = norm(segment[idx])
+        if not value:
+            return None
+        if value.upper() in ("HOME", "AWAY", "VS"):
+            return None
+        if re.fullmatch(r"\d{1,2}:\d{2}", value):
+            return None
+        if re.fullmatch(r"\d+", value) or re.fullmatch(r"[-–—]", value):
+            return None
+        if re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", value):
+            return None
+        if re.search(
+            r"(?:第?\d+節|\d+回戦|ラウンド|準々決勝|準決勝|決勝)",
+            value,
+        ):
+            return None
+        if value in (
+            "ゲームインフォメーション",
+            "試合情報",
+            "試合結果",
+            "DAZN",
+            "ABEMA",
+        ):
+            return None
+        return normalize_team(value)
+
     i = 0
     while i < len(lines):
         line = norm(lines[i])
-        if _looks_like_competition(line, heading_titles) and _has_year_month_soon(lines, i):
+
+        if (
+            _looks_like_competition(line, heading_titles)
+            and _has_year_month_soon(lines, i)
+        ):
             current_comp = line
             current_group = competition_group(line)
             i += 1
@@ -295,12 +370,11 @@ def parse_fc_schedule(html: str) -> list[dict]:
             i += 1
             continue
 
-        # 公式サイトでは候補日が同一行の場合と、HTML要素の都合で
-        # 「5月15日(土) or」「5月16日(日)」のように分割される場合がある。
         if not re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", line):
             i += 1
             continue
 
+        # Never let one fixture borrow the VS/team labels of the next fixture.
         boundary = _next_match_boundary(lines, i, current_year)
         date_scope = " ".join(lines[i:min(i + 4, boundary)])
         date_info = _parse_match_date(date_scope, current_year)
@@ -310,55 +384,96 @@ def parse_fc_schedule(html: str) -> list[dict]:
 
         segment = [norm(x) for x in lines[i:boundary]]
 
-        # HOME/AWAY is present in the legacy layout, but the current page can
-        # render a match card without those labels.  Never require it.
         side_pos = next(
-            (idx for idx, value in enumerate(segment) if value.upper() in ("HOME", "AWAY")),
+            (
+                idx
+                for idx, value in enumerate(segment)
+                if value.upper() in ("HOME", "AWAY")
+            ),
             None,
         )
-        explicit_side = segment[side_pos].upper() if side_pos is not None else None
-
-        # Find known team labels inside this fixture only.  Restricting the
-        # search to ``boundary`` prevents a finished match from borrowing the
-        # teams/VS marker of the next fixture.
-        team_hits: list[tuple[int, str]] = []
-        for idx, value in enumerate(segment):
-            team = _known_team_from_line(value)
-            if team:
-                if not team_hits or team_hits[-1][1] != team:
-                    team_hits.append((idx, team))
-
-        vs_pos = next(
-            (idx for idx, value in enumerate(segment) if value.upper().rstrip(".") == "VS"),
-            None,
+        explicit_side = (
+            segment[side_pos].upper()
+            if side_pos is not None
+            else None
         )
 
         home = away = None
         home_pos = away_pos = None
 
+        # Current/legacy in-progress fixture: teams sit immediately around VS.
+        vs_pos = next(
+            (
+                idx
+                for idx, value in enumerate(segment)
+                if value.upper().rstrip(".") == "VS"
+            ),
+            None,
+        )
         if vs_pos is not None:
-            before = [(idx, team) for idx, team in team_hits if idx < vs_pos]
-            after = [(idx, team) for idx, team in team_hits if idx > vs_pos]
-            if before and after:
-                home_pos, home = before[-1]
-                away_pos, away = after[0]
-        else:
-            # Completed matches use a score instead of VS.  The first two
-            # distinct team labels inside the current fixture are home/away.
-            distinct: list[tuple[int, str]] = []
-            for hit in team_hits:
-                if not distinct or distinct[-1][1] != hit[1]:
-                    distinct.append(hit)
-            if len(distinct) >= 2:
-                home_pos, home = distinct[0]
-                away_pos, away = distinct[1]
+            # Scan outward a little so image-alt/layout labels do not have to be
+            # present in TEAM_ALIASES.
+            for idx in range(vs_pos - 1, max(-1, vs_pos - 5), -1):
+                candidate = _fixture_value(segment, idx)
+                if candidate:
+                    home_pos, home = idx, candidate
+                    break
+            for idx in range(vs_pos + 1, min(len(segment), vs_pos + 5)):
+                candidate = _fixture_value(segment, idx)
+                if candidate:
+                    away_pos, away = idx, candidate
+                    break
 
-        if not home or not away or home == away or "FC東京" not in (home, away):
-            i = max(i + 1, boundary if boundary > i + 1 else i + 1)
+        # Completed fixture: score replaces VS. Prefer a score-shaped sequence,
+        # then fall back to two known team labels inside this fixture only.
+        if not home or not away:
+            score_left = score_right = None
+            for idx in range(1, len(segment) - 1):
+                if (
+                    re.fullmatch(r"\d+", segment[idx])
+                    and re.fullmatch(r"[-–—]", segment[idx + 1])
+                    and idx + 2 < len(segment)
+                    and re.fullmatch(r"\d+", segment[idx + 2])
+                ):
+                    score_left, score_right = idx, idx + 2
+                    break
+
+            if score_left is not None:
+                for idx in range(score_left - 1, max(-1, score_left - 5), -1):
+                    candidate = _fixture_value(segment, idx)
+                    if candidate:
+                        home_pos, home = idx, candidate
+                        break
+                for idx in range(score_right + 1, min(len(segment), score_right + 6)):
+                    candidate = _fixture_value(segment, idx)
+                    if candidate:
+                        away_pos, away = idx, candidate
+                        break
+
+        if not home or not away:
+            team_hits: list[tuple[int, str]] = []
+            for idx, value in enumerate(segment):
+                team = _known_team_from_line(value)
+                if team and (
+                    not team_hits or team_hits[-1][1] != team
+                ):
+                    team_hits.append((idx, team))
+            if len(team_hits) >= 2:
+                home_pos, home = team_hits[0]
+                away_pos, away = team_hits[1]
+
+        if (
+            not home
+            or not away
+            or home == away
+            or "FC東京" not in (home, away)
+        ):
+            i = max(i + 1, boundary)
             continue
 
-        # Time may be on a separate line.  Search only inside this fixture.
-        first_team_pos = min(x for x in (home_pos, away_pos) if x is not None)
+        first_team_pos = min(
+            x for x in (home_pos, away_pos) if x is not None
+        )
         date_info = _apply_neighbor_kickoff(
             date_info,
             segment,
@@ -366,7 +481,9 @@ def parse_fc_schedule(html: str) -> list[dict]:
             max(1, first_team_pos),
         )
 
-        side = explicit_side or ("HOME" if home == "FC東京" else "AWAY")
+        side = explicit_side or (
+            "HOME" if home == "FC東京" else "AWAY"
+        )
         stadium = _infer_stadium_from_segment(
             segment,
             [home_pos, away_pos],
@@ -374,9 +491,15 @@ def parse_fc_schedule(html: str) -> list[dict]:
         )
         round_name = _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
+
         match_key = "|".join([
-            "2026/27", current_group, current_comp, round_name,
-            date_info["date_text"], home, away,
+            "2026/27",
+            current_group,
+            current_comp,
+            round_name,
+            date_info["date_text"],
+            home,
+            away,
         ])
         results.append({
             "match_key": match_key,
@@ -394,6 +517,10 @@ def parse_fc_schedule(html: str) -> list[dict]:
             "stadium": stadium,
             "match_url": FC_SCHEDULE_URL,
         })
+
+        # Continue just after the two team labels.  Do not jump all the way to
+        # ``boundary`` because a new competition heading can appear before the
+        # next date/year-month line.
         i = i + max(home_pos, away_pos) + 1
 
     unique = {}
