@@ -19,7 +19,6 @@ from urllib3.util.retry import Retry
 BASE_DIR = Path(__file__).resolve().parent
 JST = timezone(timedelta(hours=9))
 FC_SCHEDULE_URL = "https://www.fctokyo.co.jp/match/schedule/"
-FC_SCHEDULE_FALLBACK_URL = "https://www.fctokyo.co.jp/schedule"
 FC_TICKET_NEWS_URL = "https://www.fctokyo.co.jp/news/?slug=ticket"
 FC_PRICE_URL = "https://www.fctokyo.co.jp/ticket/price/"
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FC-Tokyo-Ticket-List/2.0"}
@@ -88,18 +87,7 @@ def make_session() -> requests.Session:
 
 
 def fetch(session: requests.Session, url: str, timeout: int = 25) -> str:
-    try:
-        response = session.get(url, timeout=timeout)
-    except requests.exceptions.SSLError:
-        # 鹿島アントラーズ公式サイトでGitHub Actions環境から
-        # 証明書チェーン検証に失敗するケースがあるため、
-        # antlers.co.jp に限って証明書検証なしで1回だけ再試行する。
-        host = (urlparse(url).hostname or "").lower()
-        if host == "antlers.co.jp" or host.endswith(".antlers.co.jp"):
-            response = session.get(url, timeout=timeout, verify=False)
-        else:
-            raise
-
+    response = session.get(url, timeout=timeout)
     response.raise_for_status()
     response.encoding = response.apparent_encoding or response.encoding
     return response.text
@@ -124,7 +112,10 @@ def lines_from_html(html: str) -> tuple[BeautifulSoup, list[str]]:
 
 def competition_group(name: str) -> str:
     n = norm(name)
-    if "YBC" in n and "ルヴァン" in n:
+    # 2026/27シーズンから大会表記が
+    # 「Jリーグ ヤマザキビスケット ルヴァンカップ」になっても
+    # 同一のルヴァンカップ系グループとして扱う。
+    if "ルヴァン" in n:
         return "ＪリーグＹＢＣルヴァンカップ"
     if "天皇杯" in n:
         return "天皇杯"
@@ -135,7 +126,7 @@ def competition_group(name: str) -> str:
 
 def _looks_like_competition(line: str, heading_titles: set[str]) -> bool:
     n = norm(line)
-    known = ("J1リーグ", "JリーグYBCルヴァンカップ", "天皇杯", "プレシーズンマッチ", "国際親善試合")
+    known = ("J1リーグ", "ルヴァンカップ", "天皇杯", "プレシーズンマッチ", "国際親善試合")
     return n in heading_titles or any(k in n for k in known)
 
 
@@ -212,13 +203,6 @@ def _find_round(lines: list[str], date_index: int, comp_group: str) -> str:
 
 
 def parse_fc_schedule(html: str) -> list[dict]:
-    """
-    Parse FC Tokyo's official schedule.
-
-    Supports both layouts:
-      old: date -> HOME/AWAY -> stadium -> home -> VS/score -> away
-      current: date -> kickoff -> home -> VS/score -> away -> stadium
-    """
     soup, lines = lines_from_html(html)
     heading_titles = {norm(h.get_text(" ", strip=True)) for h in soup.find_all(["h2", "h3"])}
     current_comp = None
@@ -226,130 +210,9 @@ def parse_fc_schedule(html: str) -> list[dict]:
     current_year = None
     results: list[dict] = []
 
-    date_re = re.compile(r"\d{1,2}月\d{1,2}日\([^)]+\)")
-
-    def next_match_boundary(start_index: int) -> int:
-        for k in range(start_index, len(lines)):
-            value = norm(lines[k])
-
-            if date_re.search(value):
-                # 候補日がHTML要素の都合で
-                #   5月22日(土) or
-                #   5月23日(日)
-                # の2行に分かれるケースは、2行目を次の試合とみなさない。
-                prev = norm(lines[k - 1]) if k > 0 else ""
-                prev2 = norm(lines[k - 2]) if k > 1 else ""
-                is_alternate_date = (
-                    bool(re.search(r"\bor\s*$", prev, re.I))
-                    or (
-                        prev.lower() == "or"
-                        and bool(date_re.search(prev2))
-                    )
-                )
-                if is_alternate_date:
-                    continue
-                return k
-
-            if re.fullmatch(r"20\d{2}\.\d{2}", value):
-                return k
-            if _looks_like_competition(value, heading_titles):
-                return k
-        return len(lines)
-
-    def find_explicit_side(start_index: int, end_index: int) -> Optional[int]:
-        return next(
-            (
-                j for j in range(start_index, min(end_index, start_index + 14))
-                if norm(lines[j]).upper() in ("HOME", "AWAY")
-            ),
-            None,
-        )
-
-    def next_team_after_score(start_index: int, end_index: int) -> Optional[int]:
-        # Skip score / PK tokens and common result labels.
-        skip_exact = {
-            "-", "[", "]", "(", ")", "（", "）",
-            "PK", "PEN", "PENS", "試合結果", "MATCH RESULT",
-        }
-        for k in range(start_index, end_index):
-            value = norm(lines[k])
-            if not value:
-                continue
-            if value.upper() in skip_exact:
-                continue
-            if re.fullmatch(r"\d+", value):
-                continue
-            return k
-        return None
-
-    def find_match_teams(search_start: int, block_end: int) -> tuple[Optional[int], Optional[int], Optional[int]]:
-        # Upcoming match: home / VS / away
-        for j in range(search_start, block_end):
-            if norm(lines[j]).upper().rstrip(".") == "VS":
-                if j - 1 >= search_start and j + 1 < block_end:
-                    return j - 1, j + 1, j
-
-        # Completed match: home / 2 / - / 0 / away
-        for j in range(search_start + 2, block_end - 1):
-            if (
-                re.fullmatch(r"\d+", norm(lines[j - 1]))
-                and norm(lines[j]) == "-"
-                and re.fullmatch(r"\d+", norm(lines[j + 1]))
-            ):
-                home_index = j - 2
-                away_index = next_team_after_score(j + 2, block_end)
-                if home_index >= search_start and away_index is not None:
-                    return home_index, away_index, j
-
-        return None, None, None
-
-    def find_stadium(
-        explicit_side_index: Optional[int],
-        home_index: int,
-        away_index: int,
-        block_end: int,
-    ) -> str:
-        # Old layout put the stadium between HOME/AWAY and the home team.
-        if explicit_side_index is not None:
-            candidates = [
-                norm(x)
-                for x in lines[explicit_side_index + 1:home_index]
-                if norm(x)
-            ]
-            if candidates:
-                return candidates[0]
-
-        # Current layout puts the stadium after the away team.
-        noise_exact = {
-            "ゲームインフォメーション",
-            "試合結果",
-            "詳細",
-            "備考",
-            "TV中継",
-            "チケット",
-        }
-        noise_parts = (
-            "DAZN", "NHK", "日本テレビ", "テレビ朝日", "フジテレビ",
-            "ABEMA", "TVer", "ゲームインフォメーション",
-        )
-        for k in range(away_index + 1, block_end):
-            value = norm(lines[k])
-            if not value:
-                continue
-            if value in noise_exact:
-                continue
-            if any(part in value for part in noise_parts):
-                continue
-            # Sponsor/event copy is generally longer; stadium labels are short.
-            if len(value) <= 18:
-                return value
-
-        return "未定"
-
     i = 0
     while i < len(lines):
         line = norm(lines[i])
-
         if _looks_like_competition(line, heading_titles) and _has_year_month_soon(lines, i):
             current_comp = line
             current_group = competition_group(line)
@@ -366,64 +229,49 @@ def parse_fc_schedule(html: str) -> list[dict]:
             i += 1
             continue
 
-        if not date_re.search(line):
+        # 公式サイトでは候補日が同一行の場合と、HTML要素の都合で
+        # 「5月15日(土) or」「5月16日(日)」のように分割される場合がある。
+        # 日付を含む行から最大4行を連結し、or以降の第2候補日と別行の時刻も解析する。
+        if not re.search(r"\d{1,2}月\d{1,2}日\([^)]+\)", line):
+            i += 1
+            continue
+        date_scope = " ".join(lines[i:min(i + 4, len(lines))])
+        date_info = _parse_match_date(date_scope, current_year)
+        if not date_info:
             i += 1
             continue
 
-        block_end = next_match_boundary(i + 1)
-
-        # Date can be split across nearby text nodes; keep the existing
-        # multi-line candidate-date support.
-        date_scope = " ".join(lines[i:min(i + 4, block_end)])
-        date_info = _parse_match_date(date_scope, current_year)
-        if not date_info:
-            i = max(i + 1, block_end)
-            continue
-
-        explicit_side_index = find_explicit_side(i + 1, block_end)
-        search_start = explicit_side_index + 1 if explicit_side_index is not None else i + 1
-
-        home_index, away_index, separator_index = find_match_teams(search_start, block_end)
-        if home_index is None or away_index is None or separator_index is None:
-            i = max(i + 1, block_end)
-            continue
-
-        # Kickoff time is now commonly between the date and the home team.
-        kickoff_end = explicit_side_index if explicit_side_index is not None else home_index
-        date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, kickoff_end)
-
-        home = normalize_team(lines[home_index])
-        away = normalize_team(lines[away_index])
-        if home == away or "FC東京" not in (home, away):
-            i = max(i + 1, block_end)
-            continue
-
-        # Prefer explicit HOME/AWAY when the old page layout provides it;
-        # otherwise infer it from the home/away team positions.
-        if explicit_side_index is not None:
-            side = norm(lines[explicit_side_index]).upper()
-        else:
-            side = "HOME" if home == "FC東京" else "AWAY"
-
-        stadium = find_stadium(
-            explicit_side_index,
-            home_index,
-            away_index,
-            block_end,
+        side_index = next(
+            (j for j in range(i + 1, min(i + 12, len(lines))) if norm(lines[j]).upper() in ("HOME", "AWAY")),
+            None,
         )
+        if side_index is None:
+            i += 1
+            continue
+        date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, side_index)
+        side = norm(lines[side_index]).upper()
+        vs_index = next(
+            (j for j in range(side_index + 1, min(side_index + 16, len(lines))) if norm(lines[j]).upper().rstrip(".") == "VS"),
+            None,
+        )
+        if vs_index is None or vs_index - 1 <= side_index or vs_index + 1 >= len(lines):
+            i += 1
+            continue
+
+        home = normalize_team(lines[vs_index - 1])
+        away = normalize_team(lines[vs_index + 1])
+        if home == away or "FC東京" not in (home, away):
+            i += 1
+            continue
+
+        stadium_values = [norm(x) for x in lines[side_index + 1:vs_index - 1] if norm(x)]
+        stadium = stadium_values[0] if stadium_values else "未定"
         round_name = _find_round(lines, i, current_group)
         opponent = away if home == "FC東京" else home
-
         match_key = "|".join([
-            "2026/27",
-            current_group,
-            current_comp,
-            round_name,
-            date_info["date_text"],
-            home,
-            away,
+            "2026/27", current_group, current_comp, round_name,
+            date_info["date_text"], home, away,
         ])
-
         results.append({
             "match_key": match_key,
             "season": "2026/27",
@@ -440,231 +288,16 @@ def parse_fc_schedule(html: str) -> list[dict]:
             "stadium": stadium,
             "match_url": FC_SCHEDULE_URL,
         })
-
-        i = max(i + 1, block_end)
-
-    unique = {}
-    for item in results:
-        unique[item["match_key"]] = item
-    return sorted(unique.values(), key=lambda x: x["sort_date"])
-
-
-
-def parse_fc_schedule_live_cards(html: str) -> list[dict]:
-    """
-    Fallback parser for the live FC Tokyo schedule page.
-
-    This intentionally does not depend on competition/month headings.
-    It scans date-based match blocks and requires:
-      - HOME/AWAY near the date, and
-      - FC Tokyo as either home or away team.
-    """
-    soup, lines = lines_from_html(html)
-    results: list[dict] = []
-    date_re = re.compile(
-        r"(?P<m>\d{1,2})月(?P<d>\d{1,2})日\((?P<w>[^)]+)\)"
-        r"(?:\s*(?P<time>\d{1,2}:\d{2}))?"
-    )
-
-    def infer_year(month: int) -> int:
-        # 2026/27 season: Jul-Dec are 2026, Jan-Jun are 2027.
-        return 2026 if month >= 7 else 2027
-
-    def next_date_index(start: int) -> int:
-        for k in range(start, len(lines)):
-            if date_re.search(norm(lines[k])):
-                return k
-        return len(lines)
-
-    def find_comp_and_round(date_index: int) -> tuple[str, str, str]:
-        comp_name = ""
-        round_name = ""
-        group = "その他試合"
-        for j in range(date_index - 1, max(-1, date_index - 8), -1):
-            value = norm(lines[j])
-            if not value:
-                continue
-            if _looks_like_competition(value, set()):
-                comp_name = value
-                group = competition_group(value)
-                rm = re.search(
-                    r"(第?\d+節|\d+回戦|第?\d+戦|ラウンド[^ ]*|準々決勝|準決勝|決勝)",
-                    value,
-                )
-                if rm:
-                    round_name = rm.group(1)
-                break
-            rm = re.search(
-                r"(第?\d+節|\d+回戦|第?\d+戦|ラウンド[^ ]*|準々決勝|準決勝|決勝)",
-                value,
-            )
-            if rm and not round_name:
-                round_name = rm.group(1)
-
-        if not comp_name:
-            # The current live page can expose compact labels such as
-            # "Ｊ１リーグ 第8節" immediately before the date.
-            for j in range(date_index - 1, max(-1, date_index - 5), -1):
-                value = norm(lines[j])
-                if any(x in value for x in ("J1", "Ｊ１", "ルヴァン", "天皇杯")):
-                    comp_name = value
-                    group = competition_group(value)
-                    break
-        return comp_name or group, group, round_name
-
-    def next_team_after_score(start: int, end: int) -> Optional[int]:
-        for k in range(start, end):
-            value = norm(lines[k])
-            if not value:
-                continue
-            if value in {"-", "[", "]", "(", ")", "（", "）"}:
-                continue
-            if re.fullmatch(r"\d+", value):
-                continue
-            if value.upper() in {"PK", "PEN", "PENS"}:
-                continue
-            if value in {"試合結果", "試合情報"}:
-                continue
-            return k
-        return None
-
-    i = 0
-    while i < len(lines):
-        line = norm(lines[i])
-        dm = date_re.search(line)
-        if not dm:
-            i += 1
-            continue
-
-        month = int(dm.group("m"))
-        year = infer_year(month)
-        block_end = next_date_index(i + 1)
-
-        # Require HOME/AWAY close to the date. This avoids unrelated dates.
-        side_index = next(
-            (
-                j for j in range(i + 1, min(block_end, i + 8))
-                if norm(lines[j]).upper() in ("HOME", "AWAY")
-            ),
-            None,
-        )
-        if side_index is None:
-            i += 1
-            continue
-
-        date_scope = " ".join(lines[i:min(side_index + 1, i + 4)])
-        date_info = _parse_match_date(date_scope, year)
-        if not date_info:
-            i += 1
-            continue
-        date_info = _apply_neighbor_kickoff(date_info, lines, i + 1, side_index)
-
-        side = norm(lines[side_index]).upper()
-
-        separator_index = None
-        home_index = None
-        away_index = None
-
-        # Upcoming game: home / VS / away
-        for j in range(side_index + 1, block_end):
-            if norm(lines[j]).upper().rstrip(".") == "VS":
-                if j - 1 > side_index and j + 1 < block_end:
-                    separator_index = j
-                    home_index = j - 1
-                    away_index = j + 1
-                break
-
-        # Completed game: home / 1 / - / 0 / away
-        if separator_index is None:
-            for j in range(side_index + 3, block_end - 1):
-                if (
-                    re.fullmatch(r"\d+", norm(lines[j - 1]))
-                    and norm(lines[j]) == "-"
-                    and re.fullmatch(r"\d+", norm(lines[j + 1]))
-                ):
-                    candidate_home = j - 2
-                    candidate_away = next_team_after_score(j + 2, block_end)
-                    if candidate_home > side_index and candidate_away is not None:
-                        separator_index = j
-                        home_index = candidate_home
-                        away_index = candidate_away
-                    break
-
-        if home_index is None or away_index is None:
-            i = max(i + 1, block_end)
-            continue
-
-        home = normalize_team(lines[home_index])
-        away = normalize_team(lines[away_index])
-
-        if "FC東京" not in (home, away) or home == away:
-            i = max(i + 1, block_end)
-            continue
-
-        # On the live page the venue is between HOME/AWAY and home team.
-        stadium_candidates = [
-            norm(x) for x in lines[side_index + 1:home_index] if norm(x)
-        ]
-        stadium = stadium_candidates[0] if stadium_candidates else "未定"
-
-        comp_name, comp_group, round_name = find_comp_and_round(i)
-        opponent = away if home == "FC東京" else home
-
-        match_key = "|".join([
-            "2026/27",
-            comp_group,
-            comp_name,
-            round_name,
-            date_info["date_text"],
-            home,
-            away,
-        ])
-
-        results.append({
-            "match_key": match_key,
-            "season": "2026/27",
-            "competition_group": comp_group,
-            "competition_name": comp_name,
-            "round_name": round_name,
-            "kickoff": date_info["kickoff"],
-            "date_text": date_info["date_text"],
-            "sort_date": date_info["sort_date"],
-            "side": side,
-            "home": home,
-            "away": away,
-            "opponent": opponent,
-            "stadium": stadium,
-            "match_url": FC_SCHEDULE_URL,
-        })
-
-        i = max(i + 1, block_end)
+        i = vs_index + 2
 
     unique = {}
     for item in results:
         unique[item["match_key"]] = item
     return sorted(unique.values(), key=lambda x: x["sort_date"])
-
 
 
 def fetch_fc_schedule(session: requests.Session) -> list[dict]:
-    errors = []
-    for url in (FC_SCHEDULE_URL, FC_SCHEDULE_FALLBACK_URL):
-        try:
-            html = fetch(session, url)
-
-            matches = parse_fc_schedule(html)
-            if matches:
-                return matches
-
-            matches = parse_fc_schedule_live_cards(html)
-            if matches:
-                return matches
-
-            errors.append(f"{url}: parsed 0 matches")
-        except Exception as exc:
-            errors.append(f"{url}: {exc}")
-
-    return []
+    return parse_fc_schedule(fetch(session, FC_SCHEDULE_URL))
 
 
 def _clean_news_title(raw: str) -> str:
@@ -972,7 +605,7 @@ def _extract_general_from_scope(scope: str, full_text: str, match: dict) -> Opti
     return None
 
 
-def _extract_structured_table_general(soup: BeautifulSoup, match: dict, full_text: str = "") -> Optional[str]:
+def _extract_structured_table_general(soup: BeautifulSoup, match: dict) -> Optional[str]:
     """販売表の「一般」列、または対象試合行の最後の販売日時を取得する。"""
     aliases = aliases_for("FC東京")
     markers = _match_date_markers(match)
@@ -1001,30 +634,9 @@ def _extract_structured_table_general(soup: BeautifulSoup, match: dict, full_tex
                 continue
 
             if general_index is not None and general_index < len(cells):
-                general_cell = cells[general_index]
-                values = _extract_md_time_tokens(general_cell, match)
+                values = _extract_md_time_tokens(cells[general_index], match)
                 if values:
                     return values[0]
-
-                # 東京Vなど、表には発売「日」だけを載せ、
-                # 販売開始時刻を表の外の注記に共通記載するサイトに対応する。
-                date_only = re.search(
-                    r"(\d{1,2})\s*(?:/|\.|月)\s*(\d{1,2})(?:日)?(?:\([^)]+\))?",
-                    general_cell,
-                )
-                if date_only:
-                    combined = norm(row_text + " " + full_text)
-                    time_patterns = [
-                        r"会員割引[^。]{0,20}?一般販売ともに\s*(\d{1,2}):(\d{2})",
-                        r"販売開始初日の販売開始時間は[^。]{0,100}?(\d{1,2}):(\d{2})",
-                        r"販売開始時間は[^。]{0,100}?(\d{1,2}):(\d{2})",
-                    ]
-                    for pattern in time_patterns:
-                        tm = re.search(pattern, combined)
-                        if tm:
-                            month, day = map(int, date_only.groups())
-                            hour, minute = map(int, tm.groups())
-                            return _iso_sale(match, month, day, hour, minute)
 
             values = _extract_md_time_tokens(row_text, match)
             before_match = [v for v in values if datetime.fromisoformat(v) < match_dt]
@@ -1033,16 +645,12 @@ def _extract_structured_table_general(soup: BeautifulSoup, match: dict, full_tex
     return None
 
 
-def extract_away_general_sale(
-    html: str,
-    match: dict,
-    supplemental_text: str = "",
-) -> Optional[str]:
+def extract_away_general_sale(html: str, match: dict) -> Optional[str]:
     soup, lines = lines_from_html(html)
-    full_text = norm(" ".join(lines) + " " + supplemental_text)
-    structured = _extract_structured_table_general(soup, match, full_text)
+    structured = _extract_structured_table_general(soup, match)
     if structured:
         return structured
+    full_text = norm(" ".join(lines))
     fc_aliases = [norm(x) for x in aliases_for("FC東京")]
     markers = _match_date_markers(match)
     windows = []
@@ -1081,9 +689,6 @@ def inspect_away_sources(session: requests.Session, match: dict, source: dict) -
     for url, label in urls:
         try:
             html = fetch(session, url)
-            parent_soup = BeautifulSoup(html, "html.parser")
-            parent_text = norm(soup_with_image_alt(html).get_text(" ", strip=True))
-
             general = extract_away_general_sale(html, match)
             if general:
                 return {
@@ -1092,41 +697,6 @@ def inspect_away_sources(session: requests.Session, match: dict, source: dict) -
                     "source_name": label,
                     "note": "対戦相手FC東京の試合ブロックから一般発売日時を取得",
                 }
-
-            # 販売スケジュールをiframeで埋め込むクラブ（東京V等）に対応。
-            # 親ページの注記（例: 販売開始時刻）も補助テキストとして利用する。
-            base_host = urlparse(url).netloc
-            iframe_urls = []
-            for iframe in parent_soup.find_all("iframe"):
-                src = (iframe.get("src") or "").strip()
-                if not src:
-                    continue
-                iframe_url = urljoin(url, src)
-                parsed = urlparse(iframe_url)
-                if parsed.scheme not in ("http", "https"):
-                    continue
-                if parsed.netloc and parsed.netloc != base_host:
-                    continue
-                if iframe_url not in iframe_urls:
-                    iframe_urls.append(iframe_url)
-
-            for iframe_url in iframe_urls[:5]:
-                try:
-                    iframe_html = fetch(session, iframe_url)
-                    general = extract_away_general_sale(
-                        iframe_html,
-                        match,
-                        supplemental_text=parent_text,
-                    )
-                    if general:
-                        return {
-                            "general_at": general,
-                            "source_url": url,
-                            "source_name": label,
-                            "note": "公式ページ内の販売日程iframeから一般発売日時を取得",
-                        }
-                except Exception as iframe_exc:
-                    errors.append(f"{label} iframe {iframe_url}: {iframe_exc}")
         except Exception as exc:
             errors.append(f"{label}: {exc}")
     return {
