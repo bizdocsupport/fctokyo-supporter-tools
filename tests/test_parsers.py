@@ -1,5 +1,5 @@
 import unittest
-from scraper import parse_fc_schedule, extract_home_article_sales, parse_fc_price_sales, extract_away_general_sale
+from scraper import parse_fc_schedule, extract_home_article_sales, parse_fc_price_sales, extract_away_general_sale, load_fallback_sales, find_csv_sale
 
 SCHEDULE = '''
 <html><body><h2>Ｊ１リーグ</h2><h3>2026.08</h3>
@@ -137,6 +137,24 @@ class ParserTests(unittest.TestCase):
         match = next(m for m in parse_fc_schedule(SCHEDULE) if m['home'] == 'ヴィッセル神戸')
         html = '<div>8/22 京都戦 一般販売 7/20 10:00</div>'
         self.assertIsNone(extract_away_general_sale(html, match))
+
+
+    def test_verdy_away_verified_fallback(self):
+        match = {
+            "competition_group": "Ｊ１リーグ",
+            "sort_date": "2026-10-17T14:00:00+09:00",
+            "home": "東京ヴェルディ",
+            "away": "FC東京",
+        }
+        row = find_csv_sale(match, load_fallback_sales())
+        self.assertIsNotNone(row)
+        self.assertEqual(row["general_at"], "2026-09-18T12:00:00+09:00")
+        self.assertEqual(
+            row["source_url"],
+            "https://www.jleague-ticket.jp/sales/perform/2634510/001",
+        )
+        self.assertEqual(row["verified"], "1")
+
 
 if __name__ == '__main__':
     unittest.main()
