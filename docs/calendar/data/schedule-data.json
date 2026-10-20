@@ -736,11 +736,11 @@
       "candidate_end": "",
       "candidate_dates": "",
       "confirmed_date": "2026-12-09",
-      "kickoff": "",
+      "kickoff": "19:00",
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "横浜FC",
-      "venue": "未定",
+      "venue": "ニッパツ",
       "official_url": "https://www.fctokyo.co.jp/match/schedule/",
       "ticket_url": "/ticket/",
       "note": "",
@@ -1388,9 +1388,9 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-10-20T01:00:41.614545+00:00",
+    "built_at": "2026-10-20T14:57:09.395744+00:00",
     "source": "Googleスプレッドシート + FC東京公式",
-    "source_updated_at": "2026/10/20 10:00",
+    "source_updated_at": "2026/10/20 23:57",
     "error": "",
     "official_source_url": "https://www.fctokyo.co.jp/match/schedule/",
     "official_match_count": 44
