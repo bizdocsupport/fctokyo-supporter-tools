@@ -332,6 +332,323 @@ def merge_u21(
 
 
 
+
+def _iso_date_from_datetime(value: str) -> tuple[str, str]:
+    value = norm(value)
+    if not value:
+        return "", ""
+    match = re.match(
+        r"(?P<date>\d{4}-\d{2}-\d{2})T(?P<h>\d{2}):(?P<m>\d{2})",
+        value,
+    )
+    if not match:
+        return "", ""
+    return match.group("date"), f"{match.group('h')}:{match.group('m')}"
+
+
+def _official_candidate_dates(date_text: str) -> list[str]:
+    """Extract distinct ISO dates from FC Tokyo official date_text."""
+    text = norm(date_text)
+    found: list[str] = []
+
+    for y, m, d in re.findall(
+        r"(20\d{2})[/-](\d{1,2})[/-](\d{1,2})",
+        text,
+    ):
+        value = f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
+        if value not in found:
+            found.append(value)
+
+    # Fallback for rows that carry only MM/DD but still have sort_date.
+    return found
+
+
+def _candidate_label(date_text: str, dates: list[str]) -> str:
+    """Build the short candidate-date label used by the public calendar."""
+    text = norm(date_text)
+    tokens = re.findall(
+        r"(20\d{2})[/-](\d{1,2})[/-](\d{1,2})(?:\(([^)]+)\))?",
+        text,
+    )
+    labels: list[str] = []
+    for _, month, day, weekday in tokens:
+        label = f"{int(month)}/{int(day)}"
+        if weekday:
+            label += f"({weekday})"
+        if label not in labels:
+            labels.append(label)
+    if labels:
+        return "・".join(labels)
+
+    return "・".join(
+        f"{int(value[5:7])}/{int(value[8:10])}"
+        for value in dates
+    )
+
+
+def _official_competition(match: dict[str, Any]) -> str:
+    return norm(
+        str(
+            match.get("competition_name")
+            or match.get("competition")
+            or match.get("competition_group")
+            or ""
+        )
+    )
+
+
+def _official_round(match: dict[str, Any]) -> str:
+    return norm(str(match.get("round_name") or match.get("round") or ""))
+
+
+def _official_opponent(match: dict[str, Any]) -> str:
+    opponent = norm(str(match.get("opponent") or ""))
+    if opponent:
+        return opponent
+
+    home = norm(str(match.get("home") or ""))
+    away = norm(str(match.get("away") or ""))
+    if "FC東京" in home:
+        return away
+    if "FC東京" in away:
+        return home
+    return ""
+
+
+def _official_side(match: dict[str, Any]) -> str:
+    value = norm(str(match.get("side") or match.get("home_away") or "")).upper()
+    if value in {"HOME", "AWAY"}:
+        return value
+
+    home = norm(str(match.get("home") or ""))
+    away = norm(str(match.get("away") or ""))
+    if "FC東京" in home:
+        return "HOME"
+    if "FC東京" in away:
+        return "AWAY"
+    return ""
+
+
+def official_match_to_calendar_row(
+    match: dict[str, Any],
+    existing: dict[str, Any] | None = None,
+) -> dict[str, str]:
+    """
+    Convert scraper.py's FC Tokyo schedule row into the public calendar schema.
+
+    Existing manual IDs/URLs/notes are intentionally preserved when a row is
+    matched, because those fields may be maintained outside the official page.
+    """
+    existing = dict(existing or {})
+
+    kickoff_iso = norm(str(match.get("kickoff") or ""))
+    confirmed_date, kickoff_time = _iso_date_from_datetime(kickoff_iso)
+
+    date_text = norm(str(match.get("date_text") or ""))
+    candidates = _official_candidate_dates(date_text)
+
+    # Some official rows expose the single date through sort_date even when
+    # kickoff is still undecided.
+    sort_date = norm(str(match.get("sort_date") or ""))
+    if not candidates and sort_date:
+        sort_match = re.match(r"(20\d{2})-(\d{2})-(\d{2})", sort_date)
+        if sort_match:
+            candidates = [
+                f"{int(sort_match.group(1)):04d}-"
+                f"{int(sort_match.group(2)):02d}-"
+                f"{int(sort_match.group(3)):02d}"
+            ]
+
+    if confirmed_date:
+        status = "確定"
+        candidate_start = ""
+        candidate_end = ""
+        candidate_dates = ""
+    elif len(candidates) >= 2:
+        status = "候補日あり"
+        confirmed_date = ""
+        candidate_start = candidates[0]
+        candidate_end = candidates[-1]
+        candidate_dates = _candidate_label(date_text, candidates)
+        kickoff_time = ""
+    elif len(candidates) == 1:
+        # A single official date is a confirmed date even when kickoff time is
+        # still TBD. This is important for the tentative 2027 schedule.
+        status = "確定"
+        confirmed_date = candidates[0]
+        candidate_start = ""
+        candidate_end = ""
+        candidate_dates = ""
+        kickoff_time = ""
+    else:
+        status = norm(str(existing.get("status") or "")) or "候補日あり"
+        confirmed_date = norm(str(existing.get("confirmed_date") or ""))
+        candidate_start = norm(str(existing.get("candidate_start") or ""))
+        candidate_end = norm(str(existing.get("candidate_end") or ""))
+        candidate_dates = norm(str(existing.get("candidate_dates") or ""))
+        kickoff_time = norm(str(existing.get("kickoff") or ""))
+
+    competition = _official_competition(match)
+    round_name = _official_round(match)
+    opponent = _official_opponent(match)
+    side = _official_side(match)
+    venue = norm(str(match.get("stadium") or match.get("venue") or ""))
+    official_url = norm(
+        str(match.get("match_url") or match.get("official_url") or "")
+    )
+
+    # Preserve the manual stable ID whenever possible.
+    match_id = norm(str(existing.get("match_id") or ""))
+    if not match_id:
+        id_date = confirmed_date or candidate_start or "TBD"
+        id_round = re.sub(r"[^0-9A-Za-z一-龥ぁ-んァ-ン]+", "-", round_name).strip("-")
+        id_opp = re.sub(r"[^0-9A-Za-z一-龥ぁ-んァ-ン]+", "-", opponent).strip("-")
+        match_id = f"TOP-{id_date}-{id_round or 'ROUND'}-{id_opp or 'TBD'}"
+
+    row = {
+        "match_id": match_id,
+        "team": "TOP",
+        "competition": competition,
+        "round": round_name,
+        "status": status,
+        "candidate_start": candidate_start,
+        "candidate_end": candidate_end,
+        "candidate_dates": candidate_dates,
+        "confirmed_date": confirmed_date,
+        "kickoff": kickoff_time,
+        "duration_minutes": norm(str(existing.get("duration_minutes") or "120")) or "120",
+        "home_away": side,
+        "opponent": opponent,
+        "venue": venue,
+        "official_url": official_url or norm(str(existing.get("official_url") or "")),
+        "ticket_url": norm(str(existing.get("ticket_url") or "")),
+        "note": norm(str(existing.get("note") or "")),
+        "enabled": norm(str(existing.get("enabled") or "TRUE")) or "TRUE",
+    }
+    return row
+
+
+def _top_row_match_score(
+    existing: dict[str, Any],
+    official: dict[str, Any],
+) -> int:
+    """Score how likely a manual TOP row and official row refer to the same match."""
+    score = 0
+
+    existing_comp = norm(str(existing.get("competition") or ""))
+    official_comp = _official_competition(official)
+    if existing_comp and official_comp:
+        if existing_comp == official_comp:
+            score += 4
+        elif existing_comp in official_comp or official_comp in existing_comp:
+            score += 2
+
+    existing_round = norm(str(existing.get("round") or ""))
+    official_round = _official_round(official)
+    if existing_round and official_round and existing_round == official_round:
+        score += 4
+
+    existing_opp = norm(str(existing.get("opponent") or ""))
+    official_opp = _official_opponent(official)
+    if existing_opp and official_opp and existing_opp == official_opp:
+        score += 8
+
+    existing_side = norm(str(existing.get("home_away") or "")).upper()
+    official_side = _official_side(official)
+    if existing_side and official_side and existing_side == official_side:
+        score += 2
+
+    existing_dates = {
+        norm(str(existing.get("confirmed_date") or "")),
+        norm(str(existing.get("candidate_start") or "")),
+        norm(str(existing.get("candidate_end") or "")),
+    }
+    existing_dates.discard("")
+
+    official_dates = set(_official_candidate_dates(str(official.get("date_text") or "")))
+    exact_date, _ = _iso_date_from_datetime(str(official.get("kickoff") or ""))
+    if exact_date:
+        official_dates.add(exact_date)
+    sort_date = norm(str(official.get("sort_date") or ""))
+    if sort_date:
+        sm = re.match(r"(20\d{2}-\d{2}-\d{2})", sort_date)
+        if sm:
+            official_dates.add(sm.group(1))
+
+    if existing_dates & official_dates:
+        score += 6
+
+    return score
+
+
+def merge_official_top_matches(
+    records: list[dict[str, Any]],
+    official_matches: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """
+    Replace/refresh TOP rows from FC Tokyo official data while leaving U21 rows
+    and any other non-TOP rows untouched.
+
+    Manual match_id/ticket_url/note are preserved when an existing TOP row can
+    be matched to an official match.
+    """
+    records = [dict(row) for row in records]
+    official_matches = [dict(row) for row in official_matches]
+
+    non_top = [
+        row for row in records
+        if norm(str(row.get("team") or "")).upper() != "TOP"
+    ]
+    existing_top = [
+        row for row in records
+        if norm(str(row.get("team") or "")).upper() == "TOP"
+    ]
+
+    used_existing: set[int] = set()
+    merged_top: list[dict[str, str]] = []
+
+    for official in official_matches:
+        best_index: int | None = None
+        best_score = -1
+
+        for idx, existing in enumerate(existing_top):
+            if idx in used_existing:
+                continue
+            score = _top_row_match_score(existing, official)
+            if score > best_score:
+                best_score = score
+                best_index = idx
+
+        # Require either matching opponent/date or a strong competition+round
+        # combination. This avoids carrying a manual ID to the wrong fixture.
+        existing_row = None
+        if best_index is not None and best_score >= 8:
+            existing_row = existing_top[best_index]
+            used_existing.add(best_index)
+
+        merged_top.append(
+            official_match_to_calendar_row(official, existing=existing_row)
+        )
+
+    # If official data is empty, never wipe the manually maintained TOP rows.
+    if not official_matches:
+        return records
+
+    return non_top + merged_top
+
+
+def load_official_top_matches() -> list[dict[str, Any]]:
+    """Load TOP schedule through the project's existing scraper.py."""
+    try:
+        from scraper import fetch_fc_schedule
+    except ImportError:
+        return []
+
+    session = requests.Session()
+    return list(fetch_fc_schedule(session) or [])
+
+
+
 def normalize(records: list[dict[str, Any]]) -> list[dict[str, str]]:
     result: list[dict[str, str]] = []
     for raw in records:
@@ -368,6 +685,16 @@ def main() -> None:
         if api_url and error:
             source = "API取得エラーのため同梱サンプル"
 
+    top_source = ""
+    top_error = ""
+    try:
+        official_top = load_official_top_matches()
+        if official_top:
+            records = merge_official_top_matches(records, official_top)
+            top_source = "FC東京公式"
+    except Exception as exc:
+        top_error = f"TOP公式取得失敗: {exc}"
+
     u21_source = ""
     u21_error = ""
     try:
@@ -391,6 +718,8 @@ def main() -> None:
             "source": source,
             "source_updated_at": source_updated_at,
             "error": error,
+            "top_source": top_source,
+            "top_error": top_error,
             "u21_source": u21_source,
             "u21_error": u21_error,
         },
@@ -408,9 +737,12 @@ def main() -> None:
     print(f"Source: {source}")
     print(f"Top calendar ID: {'configured' if top_id else 'not configured'}")
     print(f"U-21 calendar ID: {'configured' if u21_id else 'not configured'}")
+    print(f"TOP source: {top_source or 'existing master data'}")
     print(f"U-21 source: {u21_source or 'not available'}")
     if error:
         print(error)
+    if top_error:
+        print(top_error)
     if u21_error:
         print(u21_error)
 
