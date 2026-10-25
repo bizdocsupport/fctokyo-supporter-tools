@@ -581,6 +581,50 @@ def _top_row_match_score(
     return score
 
 
+
+def official_match_to_calendar_record(
+    official_match: dict[str, Any],
+    existing: dict[str, Any] | None = None,
+    *args: Any,
+    **kwargs: Any,
+) -> dict[str, str]:
+    """
+    Backward-compatible name used by the existing calendar merge tests/code.
+
+    The implementation was renamed to official_match_to_calendar_row during the
+    U-21 enhancement. Keep the old public function name so existing imports do
+    not break.
+
+    Also accept legacy keyword names such as existing_record/calendar_record.
+    """
+    if existing is None:
+        existing = (
+            kwargs.pop("existing_record", None)
+            or kwargs.pop("calendar_record", None)
+            or kwargs.pop("current_record", None)
+        )
+
+    # Be tolerant if older code passed the existing calendar record first and
+    # the scraper row second.
+    if (
+        isinstance(official_match, dict)
+        and isinstance(existing, dict)
+        and str(official_match.get("team", "")).strip().upper() == "TOP"
+        and (
+            "competition_name" in existing
+            or "date_text" in existing
+            or "sort_date" in existing
+        )
+    ):
+        official_match, existing = existing, official_match
+
+    return official_match_to_calendar_row(
+        official_match,
+        existing=existing,
+    )
+
+
+
 def merge_official_top_matches(
     records: list[dict[str, Any]],
     official_matches: list[dict[str, Any]],
