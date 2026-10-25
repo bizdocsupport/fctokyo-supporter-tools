@@ -85,9 +85,9 @@
       "display_start": "2026-08-21"
     },
     {
-      "match_id": "U21-2026-EW-01",
+      "match_id": "U21-2026-08-22-1-VERDY",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第1節",
       "status": "確定",
       "candidate_start": "",
@@ -98,11 +98,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 東京ヴェルディ",
-      "venue": "味フィ西",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "味の素フィールド西が丘",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-08-22"
     },
     {
@@ -211,9 +211,9 @@
       "display_start": "2026-09-12"
     },
     {
-      "match_id": "U21-2026-EW-02",
+      "match_id": "U21-2026-09-12-2-IWATA",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第2節",
       "status": "確定",
       "candidate_start": "",
@@ -224,11 +224,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 ジュビロ磐田",
-      "venue": "夢の島",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "江東区夢の島競技場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-09-12"
     },
     {
@@ -253,9 +253,9 @@
       "display_start": "2026-09-19"
     },
     {
-      "match_id": "U21-2026-EW-03",
+      "match_id": "U21-2026-09-20-3-KAWASAKI",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第3節",
       "status": "確定",
       "candidate_start": "",
@@ -266,11 +266,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 川崎フロンターレ",
-      "venue": "夢の島",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "江東区夢の島競技場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-09-20"
     },
     {
@@ -316,9 +316,9 @@
       "display_start": "2026-09-29"
     },
     {
-      "match_id": "U21-2026-EW-04",
+      "match_id": "U21-2026-10-04-4-URAWA",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第4節",
       "status": "確定",
       "candidate_start": "",
@@ -329,11 +329,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 浦和レッズ",
-      "venue": "埼玉2",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "埼玉スタジアム2002 第2グラウンド",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-10-04"
     },
     {
@@ -421,9 +421,9 @@
       "display_start": "2026-10-17"
     },
     {
-      "match_id": "U21-2026-EW-05",
+      "match_id": "U21-2026-10-17-5-SHIMIZU",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第5節",
       "status": "確定",
       "candidate_start": "",
@@ -434,11 +434,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 清水エスパルス",
-      "venue": "夢の島",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "江東区夢の島競技場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-10-17"
     },
     {
@@ -505,25 +505,25 @@
       "display_start": "2026-10-31"
     },
     {
-      "match_id": "U21-2026-X-01",
+      "match_id": "U21-2026-11-01-1-GAMBA",
       "team": "U21",
       "competition": "U-21 Jリーグ 交流戦ラウンド",
       "round": "第1節",
-      "status": "候補日あり",
-      "candidate_start": "2026-10-31",
-      "candidate_end": "2026-11-02",
-      "candidate_dates": "10/31(土)・11/1(日)・11/2(月)",
-      "confirmed_date": "",
-      "kickoff": "",
+      "status": "確定",
+      "candidate_start": "",
+      "candidate_end": "",
+      "candidate_dates": "",
+      "confirmed_date": "2026-11-01",
+      "kickoff": "19:00",
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 ガンバ大阪",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "キックオフ時刻・会場未定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
-      "display_start": "2026-10-31"
+      "venue": "味の素スタジアム",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "",
+      "enabled": "TRUE",
+      "display_start": "2026-11-01"
     },
     {
       "match_id": "TOP-2026-J1-14",
@@ -568,7 +568,7 @@
       "display_start": "2026-11-21"
     },
     {
-      "match_id": "U21-2026-X-02",
+      "match_id": "U21-2026-11-22-2-KOBE",
       "team": "U21",
       "competition": "U-21 Jリーグ 交流戦ラウンド",
       "round": "第2節",
@@ -581,11 +581,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 ヴィッセル神戸",
-      "venue": "いぶき",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "いぶきの森球技場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-11-22"
     },
     {
@@ -631,7 +631,7 @@
       "display_start": "2026-11-29"
     },
     {
-      "match_id": "U21-2026-X-03",
+      "match_id": "U21-2026-11-29-3-NAGASAKI",
       "team": "U21",
       "competition": "U-21 Jリーグ 交流戦ラウンド",
       "round": "第3節",
@@ -640,15 +640,15 @@
       "candidate_end": "",
       "candidate_dates": "",
       "confirmed_date": "2026-11-29",
-      "kickoff": "",
+      "kickoff": "10:30",
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 V・ファーレン長崎",
-      "venue": "武蔵野",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "キックオフ時刻未定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "武蔵野陸上競技場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "",
+      "enabled": "TRUE",
       "display_start": "2026-11-29"
     },
     {
@@ -673,7 +673,7 @@
       "display_start": "2026-12-04"
     },
     {
-      "match_id": "U21-2026-X-04",
+      "match_id": "U21-2026-12-06-4-OKAYAMA",
       "team": "U21",
       "competition": "U-21 Jリーグ 交流戦ラウンド",
       "round": "第4節",
@@ -686,11 +686,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 ファジアーノ岡山",
-      "venue": "美作",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "岡山県美作ラグビーサッカー場",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-12-06"
     },
     {
@@ -757,7 +757,7 @@
       "display_start": "2026-12-19"
     },
     {
-      "match_id": "U21-2026-X-06",
+      "match_id": "U21-2026-12-19-6-NAGOYA",
       "team": "U21",
       "competition": "U-21 Jリーグ 交流戦ラウンド",
       "round": "第6節",
@@ -770,11 +770,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 名古屋グランパス",
-      "venue": "AGF",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
+      "venue": "AGFフィールド",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
       "note": "",
-      "enabled": "1",
+      "enabled": "TRUE",
       "display_start": "2026-12-19"
     },
     {
@@ -799,9 +799,9 @@
       "display_start": "2027-02-13"
     },
     {
-      "match_id": "U21-2027-EW-06",
+      "match_id": "U21-2027-02-13-6-IWATA",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第6節",
       "status": "候補日あり",
       "candidate_start": "2027-02-13",
@@ -812,11 +812,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 ジュビロ磐田",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "開催日時確定後、正式日時へ更新",
+      "enabled": "TRUE",
       "display_start": "2027-02-13"
     },
     {
@@ -841,9 +841,9 @@
       "display_start": "2027-02-20"
     },
     {
-      "match_id": "U21-2027-EW-07",
+      "match_id": "U21-2027-02-20-7-KAWASAKI",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第7節",
       "status": "候補日あり",
       "candidate_start": "2027-02-20",
@@ -854,11 +854,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 川崎フロンターレ",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "開催日時確定後、正式日時へ更新",
+      "enabled": "TRUE",
       "display_start": "2027-02-20"
     },
     {
@@ -883,9 +883,9 @@
       "display_start": "2027-02-27"
     },
     {
-      "match_id": "U21-2027-EW-08",
+      "match_id": "U21-2027-02-27-8-URAWA",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第8節",
       "status": "候補日あり",
       "candidate_start": "2027-02-27",
@@ -896,11 +896,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 浦和レッズ",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "開催日時確定後、正式日時へ更新",
+      "enabled": "TRUE",
       "display_start": "2027-02-27"
     },
     {
@@ -925,9 +925,9 @@
       "display_start": "2027-03-06"
     },
     {
-      "match_id": "U21-2027-EW-09",
+      "match_id": "U21-2027-03-06-9-SHIMIZU",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第9節",
       "status": "候補日あり",
       "candidate_start": "2027-03-06",
@@ -938,11 +938,11 @@
       "duration_minutes": "120",
       "home_away": "AWAY",
       "opponent": "U-21 清水エスパルス",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "開催日時確定後、正式日時へ更新",
+      "enabled": "TRUE",
       "display_start": "2027-03-06"
     },
     {
@@ -988,9 +988,9 @@
       "display_start": "2027-03-13"
     },
     {
-      "match_id": "U21-2027-EW-10",
+      "match_id": "U21-2027-03-13-10-VERDY",
       "team": "U21",
-      "competition": "U-21 Jリーグ 東西リーグラウンド",
+      "competition": "U-21 Jリーグ 東西リーグラウンド EAST",
       "round": "第10節",
       "status": "候補日あり",
       "candidate_start": "2027-03-13",
@@ -1001,11 +1001,11 @@
       "duration_minutes": "120",
       "home_away": "HOME",
       "opponent": "U-21 東京ヴェルディ",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "開催日時確定後、正式日時へ更新",
+      "enabled": "TRUE",
       "display_start": "2027-03-13"
     },
     {
@@ -1051,7 +1051,7 @@
       "display_start": "2027-04-03"
     },
     {
-      "match_id": "U21-2027-PO-01",
+      "match_id": "U21-2027-04-03-1-TBD",
       "team": "U21",
       "competition": "U-21 Jリーグ プレーオフラウンド",
       "round": "第1節",
@@ -1062,13 +1062,13 @@
       "confirmed_date": "",
       "kickoff": "",
       "duration_minutes": "120",
-      "home_away": "",
+      "home_away": "HOME",
       "opponent": "対戦相手未定",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "順位に応じて出場する場合のみ開催。詳細未定。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "東リーグラウンドにおいて2位もしくは6位となった場合は実施いたしません。",
+      "enabled": "TRUE",
       "display_start": "2027-04-03"
     },
     {
@@ -1093,10 +1093,10 @@
       "display_start": "2027-04-10"
     },
     {
-      "match_id": "U21-2027-PO-02",
+      "match_id": "U21-2027-04-10-1or2-TBD",
       "team": "U21",
       "competition": "U-21 Jリーグ プレーオフラウンド",
-      "round": "第2節",
+      "round": "第1or2節",
       "status": "進出時",
       "candidate_start": "2027-04-10",
       "candidate_end": "2027-04-11",
@@ -1104,13 +1104,13 @@
       "confirmed_date": "",
       "kickoff": "",
       "duration_minutes": "120",
-      "home_away": "",
+      "home_away": "AWAY",
       "opponent": "対戦相手未定",
-      "venue": "未定",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "順位・第1節結果に応じて出場する場合のみ開催。詳細未定。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "東リーグラウンドにおいて1位もしくは6位となった場合は実施いたしません。",
+      "enabled": "TRUE",
       "display_start": "2027-04-10"
     },
     {
@@ -1135,10 +1135,10 @@
       "display_start": "2027-04-16"
     },
     {
-      "match_id": "U21-2027-PO-FINAL",
+      "match_id": "U21-2027-04-17-2-TBD",
       "team": "U21",
       "competition": "U-21 Jリーグ プレーオフラウンド",
-      "round": "決勝・3位決定戦",
+      "round": "第2節",
       "status": "進出時",
       "candidate_start": "2027-04-17",
       "candidate_end": "2027-04-18",
@@ -1146,13 +1146,13 @@
       "confirmed_date": "",
       "kickoff": "",
       "duration_minutes": "120",
-      "home_away": "",
+      "home_away": "AWAY",
       "opponent": "対戦相手未定",
-      "venue": "中立地",
-      "official_url": "https://www.fctokyo.co.jp/news/details/337621/",
-      "ticket_url": "https://fctokyo.xyz/ticket/",
-      "note": "進出時のみ開催。決勝・3位決定戦は中立地。",
-      "enabled": "1",
+      "venue": "",
+      "official_url": "https://www.fctokyo.co.jp/team/u21/schedule/",
+      "ticket_url": "",
+      "note": "東リーグラウンドにおいて1位もしくは2位となった場合のみ実施いたします。",
+      "enabled": "TRUE",
       "display_start": "2027-04-17"
     },
     {
@@ -1325,13 +1325,13 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-10-25T02:21:50.907886+00:00",
+    "built_at": "2026-10-25T12:54:59.385529+00:00",
     "source": "Googleスプレッドシート",
-    "source_updated_at": "2026/10/25 11:21",
+    "source_updated_at": "2026/10/25 21:54",
     "error": "",
     "top_source": "",
     "top_error": "",
-    "u21_source": "Googleスプレッドシート / 同梱CSV",
+    "u21_source": "同梱CSV（U-21はAPIより優先）",
     "u21_error": ""
   },
   "config": {
