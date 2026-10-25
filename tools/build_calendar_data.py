@@ -833,10 +833,26 @@ def main() -> None:
     except Exception as exc:
         top_error = f"TOP公式取得失敗: {exc}"
 
-    # U-21 is intentionally kept as master-data driven.
-    # Do not scrape/replace U-21 here; use Google Sheet or sample CSV.
-    u21_source = "Googleスプレッドシート / 同梱CSV"
+    # U-21 is intentionally CSV-driven.
+    # The remote master/API may still contain older tentative U-21 rows, so
+    # always replace only U-21 rows with the bundled CSV after the TOP merge.
+    # TOP-team rows remain API/official driven.
+    u21_source = ""
     u21_error = ""
+    try:
+        csv_rows = read_csv_file(SAMPLE_PATH) if SAMPLE_PATH.exists() else []
+        csv_u21 = [
+            row for row in csv_rows
+            if str(row.get("team", "") or "").strip().upper() == "U21"
+        ]
+        if csv_u21:
+            records = merge_u21(records, csv_u21)
+            u21_source = "同梱CSV（U-21はAPIより優先）"
+        else:
+            u21_source = "Googleスプレッドシート（CSVにU-21なし）"
+    except Exception as exc:
+        u21_error = f"U-21 CSV反映失敗: {exc}"
+        u21_source = "Googleスプレッドシート"
 
     payload = {
         "schedule": normalize(records),
