@@ -787,6 +787,142 @@ def load_official_top_matches() -> list[dict[str, Any]]:
 
 
 
+
+def enrich_emperor_cup_calendar(
+    records: list[dict[str, Any]],
+    ticket_url: str = "/ticket/",
+) -> list[dict[str, Any]]:
+    """
+    Apply FC Tokyo's 2026 Emperor's Cup announcement to calendar rows.
+
+    Official announcement (2026-10-20):
+    - R16 / 4th round: 2026-12-09 19:00, away vs Yokohama FC,
+      NHK Spring Mitsuzawa Football Stadium
+    - Ticket sales: 2026-11-14 13:00 (planned)
+    - If FC Tokyo advances:
+      QF 2026-12-23
+      SF 2026-12-27
+      Final 2027-01-01 at MUFG Stadium (National Stadium)
+    """
+    rows = [dict(row) for row in records]
+    official_url = "https://www.fctokyo.co.jp/news/details/342651/"
+
+    # Enrich/repair the already-auto-detected R16 row.
+    target = None
+    for row in rows:
+        if (
+            norm(str(row.get("team") or "")).upper() == "TOP"
+            and "天皇杯" in norm(str(row.get("competition") or ""))
+            and norm(str(row.get("confirmed_date") or "")) == "2026-12-09"
+        ):
+            target = row
+            break
+
+    if target is None:
+        target = {
+            "match_id": "TOP-EMPEROR-20261209-R16",
+            "team": "TOP",
+            "competition": "天皇杯",
+            "round": "ラウンド16（4回戦）",
+            "status": "確定",
+            "candidate_start": "",
+            "candidate_end": "",
+            "candidate_dates": "",
+            "confirmed_date": "2026-12-09",
+            "kickoff": "19:00",
+            "duration_minutes": "120",
+            "home_away": "AWAY",
+            "opponent": "横浜FC",
+            "venue": "ニッパツ三ツ沢球技場",
+            "official_url": official_url,
+            "ticket_url": ticket_url,
+            "note": "チケット販売：11/14(土)13:00〜（予定）",
+            "enabled": "TRUE",
+            "source": "FC東京公式",
+        }
+        rows.append(target)
+    else:
+        target.update({
+            "competition": "天皇杯",
+            "round": "ラウンド16（4回戦）",
+            "status": "確定",
+            "candidate_start": "",
+            "candidate_end": "",
+            "candidate_dates": "",
+            "confirmed_date": "2026-12-09",
+            "kickoff": "19:00",
+            "duration_minutes": target.get("duration_minutes") or "120",
+            "home_away": "AWAY",
+            "opponent": "横浜FC",
+            "venue": "ニッパツ三ツ沢球技場",
+            "official_url": official_url,
+            "ticket_url": target.get("ticket_url") or ticket_url,
+            "note": "チケット販売：11/14(土)13:00〜（予定）",
+            "enabled": target.get("enabled") or "TRUE",
+            "source": "FC東京公式",
+        })
+
+    progression = [
+        {
+            "match_id": "TOP-EMPEROR-20261223-QF",
+            "round": "準々決勝",
+            "date": "2026-12-23",
+            "candidate": "12/23(水)",
+            "venue": "",
+            "note": "ラウンド16（4回戦）勝利時に進出。キックオフ時刻・会場・対戦相手未定。",
+        },
+        {
+            "match_id": "TOP-EMPEROR-20261227-SF",
+            "round": "準決勝",
+            "date": "2026-12-27",
+            "candidate": "12/27(日)",
+            "venue": "",
+            "note": "準々決勝勝利時に進出。キックオフ時刻・会場・対戦相手未定。",
+        },
+        {
+            "match_id": "TOP-EMPEROR-20270101-FINAL",
+            "round": "決勝",
+            "date": "2027-01-01",
+            "candidate": "1/1(金祝)",
+            "venue": "MUFGスタジアム（国立競技場）",
+            "note": "準決勝勝利時に進出。キックオフ時刻・対戦相手未定。",
+        },
+    ]
+
+    by_id = {norm(str(row.get("match_id") or "")): row for row in rows}
+    for item in progression:
+        row = by_id.get(item["match_id"])
+        values = {
+            "match_id": item["match_id"],
+            "team": "TOP",
+            "competition": "天皇杯",
+            "round": item["round"],
+            "status": "進出時",
+            "candidate_start": item["date"],
+            "candidate_end": item["date"],
+            "candidate_dates": item["candidate"],
+            "confirmed_date": "",
+            "kickoff": "",
+            "duration_minutes": "120",
+            "home_away": "",
+            "opponent": "対戦相手未定",
+            "venue": item["venue"],
+            "official_url": official_url,
+            "ticket_url": ticket_url,
+            "note": item["note"],
+            "enabled": "TRUE",
+            "source": "FC東京公式",
+        }
+        if row is None:
+            rows.append(values)
+            by_id[item["match_id"]] = rows[-1]
+        else:
+            row.update(values)
+
+    return rows
+
+
+
 def normalize(records: list[dict[str, Any]]) -> list[dict[str, str]]:
     result: list[dict[str, str]] = []
     for raw in records:
@@ -853,6 +989,8 @@ def main() -> None:
     except Exception as exc:
         u21_error = f"U-21 CSV反映失敗: {exc}"
         u21_source = "Googleスプレッドシート"
+
+    records = enrich_emperor_cup_calendar(records, ticket_url)
 
     payload = {
         "schedule": normalize(records),
