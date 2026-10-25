@@ -1,19 +1,19 @@
 ﻿match_id,team,competition,round,status,candidate_start,candidate_end,candidate_dates,confirmed_date,kickoff,duration_minutes,home_away,opponent,venue,official_url,ticket_url,note,enabled
-U21-2026-EW-01,U21,U-21 Jリーグ 東西リーグラウンド,第1節,確定,,,,2026-08-22,18:00,120,AWAY,U-21 東京ヴェルディ,味フィ西,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-EW-02,U21,U-21 Jリーグ 東西リーグラウンド,第2節,確定,,,,2026-09-12,18:00,120,HOME,U-21 ジュビロ磐田,夢の島,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-EW-03,U21,U-21 Jリーグ 東西リーグラウンド,第3節,確定,,,,2026-09-20,17:00,120,HOME,U-21 川崎フロンターレ,夢の島,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-EW-04,U21,U-21 Jリーグ 東西リーグラウンド,第4節,確定,,,,2026-10-04,14:00,120,AWAY,U-21 浦和レッズ,埼玉2,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-EW-05,U21,U-21 Jリーグ 東西リーグラウンド,第5節,確定,,,,2026-10-17,16:00,120,HOME,U-21 清水エスパルス,夢の島,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-X-01,U21,U-21 Jリーグ 交流戦ラウンド,第1節,確定,,,,2026-11-01,19:00,120,HOME,U-21 ガンバ大阪,味の素スタジアム,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-X-02,U21,U-21 Jリーグ 交流戦ラウンド,第2節,確定,,,,2026-11-22,14:00,120,AWAY,U-21 ヴィッセル神戸,いぶきの森球技場,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-X-03,U21,U-21 Jリーグ 交流戦ラウンド,第3節,確定,,,,2026-11-29,10:30,120,HOME,U-21 V・ファーレン長崎,武蔵野陸上競技場,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-X-04,U21,U-21 Jリーグ 交流戦ラウンド,第4節,確定,,,,2026-12-06,14:00,120,AWAY,U-21 ファジアーノ岡山,岡山県美作ラグビーサッカー場,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2026-X-06,U21,U-21 Jリーグ 交流戦ラウンド,第6節,確定,,,,2026-12-19,15:00,120,HOME,U-21 名古屋グランパス,AGFフィールド,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,,TRUE
-U21-2027-EW-06,U21,U-21 Jリーグ 東西リーグラウンド,第6節,候補日あり,2027-02-13,2027-02-15,2/13(土)・2/14(日)・2/15(月),,,120,AWAY,U-21 ジュビロ磐田,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。,TRUE
-U21-2027-EW-07,U21,U-21 Jリーグ 東西リーグラウンド,第7節,候補日あり,2027-02-20,2027-02-22,2/20(土)・2/21(日)・2/22(月),,,120,AWAY,U-21 川崎フロンターレ,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。,TRUE
-U21-2027-EW-08,U21,U-21 Jリーグ 東西リーグラウンド,第8節,候補日あり,2027-02-27,2027-03-01,2/27(土)・2/28(日)・3/1(月),,,120,HOME,U-21 浦和レッズ,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。,TRUE
-U21-2027-EW-09,U21,U-21 Jリーグ 東西リーグラウンド,第9節,候補日あり,2027-03-06,2027-03-08,3/6(土)・3/7(日)・3/8(月),,,120,AWAY,U-21 清水エスパルス,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。,TRUE
-U21-2027-EW-10,U21,U-21 Jリーグ 東西リーグラウンド,第10節,候補日あり,2027-03-13,2027-03-15,3/13(土)・3/14(日)・3/15(月),,,120,HOME,U-21 東京ヴェルディ,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,開催日・キックオフ時刻・会場などの詳細は12月発表予定。候補日以外で開催する可能性あり。,TRUE
-U21-2027-PO-01,U21,U-21 Jリーグ プレーオフラウンド,第1節,進出時,2027-04-03,2027-04-04,4/3(土)・4/4(日),,,120,,対戦相手未定,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,順位に応じて出場する場合のみ開催。詳細未定。,TRUE
-U21-2027-PO-02,U21,U-21 Jリーグ プレーオフラウンド,第2節,進出時,2027-04-10,2027-04-11,4/10(土)・4/11(日),,,120,,対戦相手未定,未定,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,順位・第1節結果に応じて出場する場合のみ開催。詳細未定。,TRUE
-U21-2027-PO-FINAL,U21,U-21 Jリーグ プレーオフラウンド,決勝・3位決定戦,進出時,2027-04-17,2027-04-18,4/17(土)・4/18(日),,,120,,対戦相手未定,中立地,https://www.fctokyo.co.jp/team/u21/schedule/,https://fctokyo.xyz/ticket/,進出時のみ開催。決勝・3位決定戦は中立地。,TRUE
+U21-2026-08-22-1-VERDY,U21,U-21 Jリーグ 東西リーグラウンド EAST,第1節,確定,,,,2026-08-22,18:00,120,AWAY,U-21 東京ヴェルディ,味の素フィールド西が丘,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-09-12-2-IWATA,U21,U-21 Jリーグ 東西リーグラウンド EAST,第2節,確定,,,,2026-09-12,18:00,120,HOME,U-21 ジュビロ磐田,江東区夢の島競技場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-09-20-3-KAWASAKI,U21,U-21 Jリーグ 東西リーグラウンド EAST,第3節,確定,,,,2026-09-20,17:00,120,HOME,U-21 川崎フロンターレ,江東区夢の島競技場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-10-04-4-URAWA,U21,U-21 Jリーグ 東西リーグラウンド EAST,第4節,確定,,,,2026-10-04,14:00,120,AWAY,U-21 浦和レッズ,埼玉スタジアム2002 第2グラウンド,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-10-17-5-SHIMIZU,U21,U-21 Jリーグ 東西リーグラウンド EAST,第5節,確定,,,,2026-10-17,16:00,120,HOME,U-21 清水エスパルス,江東区夢の島競技場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-11-01-1-GAMBA,U21,U-21 Jリーグ 交流戦ラウンド,第1節,確定,,,,2026-11-01,19:00,120,HOME,U-21 ガンバ大阪,味の素スタジアム,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-11-22-2-KOBE,U21,U-21 Jリーグ 交流戦ラウンド,第2節,確定,,,,2026-11-22,14:00,120,AWAY,U-21 ヴィッセル神戸,いぶきの森球技場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-11-29-3-NAGASAKI,U21,U-21 Jリーグ 交流戦ラウンド,第3節,確定,,,,2026-11-29,10:30,120,HOME,U-21 V・ファーレン長崎,武蔵野陸上競技場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-12-06-4-OKAYAMA,U21,U-21 Jリーグ 交流戦ラウンド,第4節,確定,,,,2026-12-06,14:00,120,AWAY,U-21 ファジアーノ岡山,岡山県美作ラグビーサッカー場,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2026-12-19-6-NAGOYA,U21,U-21 Jリーグ 交流戦ラウンド,第6節,確定,,,,2026-12-19,15:00,120,HOME,U-21 名古屋グランパス,AGFフィールド,https://www.fctokyo.co.jp/team/u21/schedule/,,,TRUE
+U21-2027-02-13-6-IWATA,U21,U-21 Jリーグ 東西リーグラウンド EAST,第6節,候補日あり,2027-02-13,2027-02-15,2/13(土)・2/14(日)・2/15(月),,,120,AWAY,U-21 ジュビロ磐田,,https://www.fctokyo.co.jp/team/u21/schedule/,,開催日時確定後、正式日時へ更新,TRUE
+U21-2027-02-20-7-KAWASAKI,U21,U-21 Jリーグ 東西リーグラウンド EAST,第7節,候補日あり,2027-02-20,2027-02-22,2/20(土)・2/21(日)・2/22(月),,,120,AWAY,U-21 川崎フロンターレ,,https://www.fctokyo.co.jp/team/u21/schedule/,,開催日時確定後、正式日時へ更新,TRUE
+U21-2027-02-27-8-URAWA,U21,U-21 Jリーグ 東西リーグラウンド EAST,第8節,候補日あり,2027-02-27,2027-03-01,2/27(土)・2/28(日)・3/1(月),,,120,HOME,U-21 浦和レッズ,,https://www.fctokyo.co.jp/team/u21/schedule/,,開催日時確定後、正式日時へ更新,TRUE
+U21-2027-03-06-9-SHIMIZU,U21,U-21 Jリーグ 東西リーグラウンド EAST,第9節,候補日あり,2027-03-06,2027-03-08,3/6(土)・3/7(日)・3/8(月),,,120,AWAY,U-21 清水エスパルス,,https://www.fctokyo.co.jp/team/u21/schedule/,,開催日時確定後、正式日時へ更新,TRUE
+U21-2027-03-13-10-VERDY,U21,U-21 Jリーグ 東西リーグラウンド EAST,第10節,候補日あり,2027-03-13,2027-03-15,3/13(土)・3/14(日)・3/15(月),,,120,HOME,U-21 東京ヴェルディ,,https://www.fctokyo.co.jp/team/u21/schedule/,,開催日時確定後、正式日時へ更新,TRUE
+U21-2027-04-03-1-TBD,U21,U-21 Jリーグ プレーオフラウンド,第1節,進出時,2027-04-03,2027-04-04,4/3(土)・4/4(日),,,120,HOME,対戦相手未定,,https://www.fctokyo.co.jp/team/u21/schedule/,,東リーグラウンドにおいて2位もしくは6位となった場合は実施いたしません。,TRUE
+U21-2027-04-10-1or2-TBD,U21,U-21 Jリーグ プレーオフラウンド,第1or2節,進出時,2027-04-10,2027-04-11,4/10(土)・4/11(日),,,120,AWAY,対戦相手未定,,https://www.fctokyo.co.jp/team/u21/schedule/,,東リーグラウンドにおいて1位もしくは6位となった場合は実施いたしません。,TRUE
+U21-2027-04-17-2-TBD,U21,U-21 Jリーグ プレーオフラウンド,第2節,進出時,2027-04-17,2027-04-18,4/17(土)・4/18(日),,,120,AWAY,対戦相手未定,,https://www.fctokyo.co.jp/team/u21/schedule/,,東リーグラウンドにおいて1位もしくは2位となった場合のみ実施いたします。,TRUE
